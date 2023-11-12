@@ -1,30 +1,18 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
 public class drone_launcher {
-    public enum STATE {
-        DRONE_LAUNCHER_LOADED,
-        DRONE_LAUNCHED,
+    Servo tempServo;
+    Servo droneServo;
+
+    public void drone_launcher(HardwareMap hardwareMap) {
+        droneServo = hardwareMap.get(Servo.class, "droneServo");
     }
 
-    public enum EVENT {
-        GAME_START,
-        DRONE_LAUNCH_BUTTON_PRESSED,
-    }
-
-    STATE currentState;
-
-    public drone_launcher.STATE getState() {
-        return currentState;
-    }
-
-    public void transition(EVENT event) {
-        switch (event) {
-            case GAME_START:
-                currentState = drone_launcher.STATE.DRONE_LAUNCHER_LOADED;
-                break;
-            case DRONE_LAUNCH_BUTTON_PRESSED:
-                currentState = drone_launcher.STATE.DRONE_LAUNCHED;
-                break;
-        }
+    public void launchDrone() {
+        tempServo.setPosition(0.5);
     }
 }

@@ -20,6 +20,8 @@ public class arm {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION);
     static final double     DRIVE_SPEED             = 0.6;
     boolean ARM_MOTOR_BUSY = false;
+
+
     public enum STATE {
         ARM_FORWARD,
         ARM_BACKWARD,
