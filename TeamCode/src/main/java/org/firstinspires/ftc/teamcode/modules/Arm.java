@@ -107,17 +107,17 @@ public class Arm {
 
 
     public void moveArmForward(double power){
-        if (power > 0){
+        if (power < 0){
             return;
-        } else if (power <= 0) {
+        } else if (power >= 0) {
             pixelArm.setPower(power);
         }
     }
 
     public void moveArmBackward(double power){
-        if (power < 0){
+        if (power > 0){
             return;
-        } else if (power >= 0) {
+        } else if (power <= 0) {
             pixelArm.setPower(power);
         }
     }
