@@ -4,14 +4,15 @@ import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class arm {
+public class Arm {
 
 
-    DcMotorEx armMotor;
+    DcMotorEx pixelArm;
     Servo linkMotor;
     Servo clawMotor;
     private ElapsedTime runtime = new ElapsedTime();
@@ -20,6 +21,11 @@ public class arm {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION);
     static final double     DRIVE_SPEED             = 0.6;
     boolean ARM_MOTOR_BUSY = false;
+
+
+
+//    public void setDirection(DcMotorSimple.Direction reverse) {
+//    }
 
 
     public enum STATE {
@@ -48,35 +54,35 @@ public class arm {
     STATE currentState;
     STATE armcurrentState;
 
-    public arm.STATE getState() {
+    public Arm.STATE getState() {
         return currentState;
     }
 
     public void transition(EVENT event) {
         switch (event) {
             case TWO_LJ_DOWN:
-                currentState = arm.STATE.ARM_FORWARD;
+                currentState = Arm.STATE.ARM_FORWARD;
                 break;
             case TWO_LJ_UP:
-                currentState = arm.STATE.ARM_BACKWARD;
+                currentState = Arm.STATE.ARM_BACKWARD;
                 break;
             case TWO_Y:
-                currentState = arm.STATE.DROP_POS;
+                currentState = Arm.STATE.DROP_POS;
                 break;
             case TWO_A:
-                currentState = arm.STATE.PICK_POS;
+                currentState = Arm.STATE.PICK_POS;
                 break;
             case TWO_RJ_UP:
-                currentState = arm.STATE.ARM_LINK1_FORWARD;
+                currentState = Arm.STATE.ARM_LINK1_FORWARD;
                 break;
             case TWO_RJ_DOWN:
-                currentState = arm.STATE.ARM_LINK1_BACK;
+                currentState = Arm.STATE.ARM_LINK1_BACK;
                 break;
             case TWO_LB:
-                currentState = arm.STATE.CLAW_OPEN;
+                currentState = Arm.STATE.CLAW_OPEN;
                 break;
             case TWO_RB:
-                currentState = arm.STATE.CLAW_CLOSE;
+                currentState = Arm.STATE.CLAW_CLOSE;
                 break;
         }
     }
@@ -94,8 +100,9 @@ public class arm {
         }
     }
 
-    public arm(HardwareMap hardwareMap) {
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+    public Arm(HardwareMap hardwareMap) {
+        pixelArm = hardwareMap.get(DcMotorEx.class, "armMotor");
+        pixelArm.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -103,7 +110,7 @@ public class arm {
         if (power > 0){
             return;
         } else if (power <= 0) {
-            armMotor.setPower(power);
+            pixelArm.setPower(power);
         }
     }
 
@@ -111,7 +118,7 @@ public class arm {
         if (power < 0){
             return;
         } else if (power >= 0) {
-            armMotor.setPower(power);
+            pixelArm.setPower(power);
         }
     }
 
@@ -122,12 +129,12 @@ public class arm {
         }
         else if(armcurrentState == STATE.DROP_POS ||
                 armcurrentState == STATE.ARM_BACKWARD){
-            armMotor.setPower(0);
+            pixelArm.setPower(0);
             armcurrentState = STATE.ARM_IDLE;
         }
         clawOpen();
         encoderDrive(0.05, 0);
-        System.out.println("completed set pick pos");
+        //System.out.println("completed set pick pos");
     }
     public void armSetDropPos(){
         if(armcurrentState == STATE.DROP_POS || armcurrentState == STATE.ARM_BACKWARD) /* And check if it is within limits **/{
@@ -135,12 +142,12 @@ public class arm {
         }
         else if(armcurrentState == STATE.PICK_POS ||
                 armcurrentState == STATE.ARM_FORWARD){
-            armMotor.setPower(0);
+            pixelArm.setPower(0);
             armcurrentState = STATE.ARM_IDLE;
         }
         clawClose();
         encoderDrive(0.05, 120);
-        System.out.println("completed set drop pos");
+        //System.out.println("completed set drop pos");
     }
     public void moveLinkPickUp(){
         linkMotor.setPosition(0);
@@ -163,15 +170,15 @@ public class arm {
 
 
         // Determine new target position, and pass to motor controller
-        newArmTarget = armMotor.getCurrentPosition() + (int) (turnAngle * COUNTS_PER_INCH);
-        armMotor.setTargetPosition(newArmTarget);
+        newArmTarget = pixelArm.getCurrentPosition() + (int) (turnAngle * COUNTS_PER_INCH);
+        pixelArm.setTargetPosition(newArmTarget);
 
         // Turn On RUN_TO_POSITION
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        armMotor.setPower(Math.abs(speed));
+        pixelArm.setPower(Math.abs(speed));
 
         ARM_MOTOR_BUSY = true;
 

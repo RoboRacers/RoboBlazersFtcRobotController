@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.modules.drone_launcher;
+import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
 
-public class drone_test extends LinearOpMode {
+public class DroneTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Servo droneServo = null;
@@ -23,9 +18,9 @@ public class drone_test extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        droneServo  = hardwareMap.get(Servo.class, "droneServo");
+        //droneServo  = hardwareMap.get(Servo.class, "droneServo");
 
-        drone_launcher dronelauncher = new drone_launcher(hardwareMap);
+        DroneLauncher dronelauncher = new DroneLauncher(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
