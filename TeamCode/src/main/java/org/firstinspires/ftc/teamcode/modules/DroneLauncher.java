@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import static org.firstinspires.ftc.robotcontroller.external.samples.ConceptRampMotorSpeed.INCREMENT;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-public class DroneLauncher {
+import com.qualcomm.robotcore.util.ElapsedTime;
+public class DroneLauncher extends LinearOpMode {
     Servo tempServo;
     Servo droneServo;
 
+    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
 
@@ -15,6 +19,16 @@ public class DroneLauncher {
     }
 
     public void launchDrone() {
-        tempServo.setPosition(0.5);
+        double target = timer.time() + 5;
+        while(opModeIsActive()){
+            if(timer.time()>target){
+                target += 5;
+                double position = INCREMENT;
+                droneServo.setPosition(position);
+            }
+        }
     }
+
+    @Override
+    public void runOpMode(){}
 }
