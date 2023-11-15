@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class DroneLauncher extends LinearOpMode {
     Servo tempServo;
     Servo droneServo;
@@ -14,7 +17,7 @@ public class DroneLauncher extends LinearOpMode {
 
 
 
-    public DroneLauncher(HardwareMap hardwareMap) {
+    public DroneLauncher(HardwareMap hardwareMap, Telemetry telemetry) {
         droneServo = hardwareMap.get(Servo.class, "droneServo");
     }
 

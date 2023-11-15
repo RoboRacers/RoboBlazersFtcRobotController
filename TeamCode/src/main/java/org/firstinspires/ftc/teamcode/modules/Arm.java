@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Arm {
 
 
@@ -100,9 +102,13 @@ public class Arm {
         }
     }
 
-    public Arm(HardwareMap hardwareMap) {
+    public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         pixelArm = hardwareMap.get(DcMotorEx.class, "armMotor");
         pixelArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        pixelArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        linkMotor = hardwareMap.get(Servo.class, "linkMotor");
+        clawMotor = hardwareMap.get(Servo.class, "clawMotor");
     }
 
 
@@ -150,10 +156,10 @@ public class Arm {
         //System.out.println("completed set drop pos");
     }
     public void moveLinkPickUp(){
-        linkMotor.setPosition(0);
+        linkMotor.setPosition(1);
     }
     public void moveLinkDrop(){
-        linkMotor.setPosition(1);
+        linkMotor.setPosition(0.575);
     }
     public void clawOpen(){
         clawMotor.setPosition(0.75);
