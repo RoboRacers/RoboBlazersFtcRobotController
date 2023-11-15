@@ -29,7 +29,7 @@ public class ArmTest extends LinearOpMode {
             //armMotor  = hardwareMap.get(DcMotor.class, "armMotor");
 
 
-            Arm pixelArm = new Arm(hardwareMap);
+            Arm pixelArm = new Arm(hardwareMap, telemetry);
 
             // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
             // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
 public class DroneTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private Servo droneServo = null;
+    // private Servo droneServo = null;
 
 
     @Override
@@ -20,7 +20,7 @@ public class DroneTest extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         //droneServo  = hardwareMap.get(Servo.class, "droneServo");
 
-        DroneLauncher dronelauncher = new DroneLauncher(hardwareMap);
+        DroneLauncher dronelauncher = new DroneLauncher(hardwareMap, telemetry);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
