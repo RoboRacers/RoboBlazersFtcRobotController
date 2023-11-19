@@ -35,8 +35,8 @@ public class Arm {
         ARM_BACKWARD,
         DROP_POS,
         PICK_POS,
-        ARM_LINK1_FORWARD,
-        ARM_LINK1_BACK,
+        ARM_LINK1_PICK,
+        ARM_LINK1_DROP,
         CLAW_OPEN,
         CLAW_CLOSE,
         ARM_IDLE,
@@ -45,12 +45,13 @@ public class Arm {
     public enum EVENT {
         TWO_LJ_DOWN,
         TWO_LJ_UP,
-        TWO_Y,
-        TWO_A,
+        TWO_DPAD_UP,
+        TWO_DPAD_DOWN,
         TWO_RJ_UP,
         TWO_RJ_DOWN,
         TWO_LB,
-        TWO_RB
+        TWO_RB,
+        TWO_A
     }
 
     STATE currentState;
@@ -68,17 +69,17 @@ public class Arm {
             case TWO_LJ_UP:
                 currentState = Arm.STATE.ARM_BACKWARD;
                 break;
-            case TWO_Y:
+            case TWO_DPAD_UP:
                 currentState = Arm.STATE.DROP_POS;
                 break;
-            case TWO_A:
+            case TWO_DPAD_DOWN:
                 currentState = Arm.STATE.PICK_POS;
                 break;
             case TWO_RJ_UP:
-                currentState = Arm.STATE.ARM_LINK1_FORWARD;
+                currentState = Arm.STATE.ARM_LINK1_PICK;
                 break;
             case TWO_RJ_DOWN:
-                currentState = Arm.STATE.ARM_LINK1_BACK;
+                currentState = Arm.STATE.ARM_LINK1_DROP;
                 break;
             case TWO_LB:
                 currentState = Arm.STATE.CLAW_OPEN;
@@ -92,12 +93,28 @@ public class Arm {
     public void update(){
         switch (currentState) {
             case ARM_FORWARD:
+                moveArmForward(0);
                 break;
             case ARM_BACKWARD:
+                moveArmBackward(-0.2);
                 break;
-            case ARM_LINK1_FORWARD:
+            case ARM_LINK1_PICK:
+                moveLinkPickUp();
                 break;
-            case ARM_LINK1_BACK:
+            case ARM_LINK1_DROP:
+                moveLinkDrop();
+                break;
+            case DROP_POS:
+                armSetDropPos();
+                break;
+            case PICK_POS:
+                armSetPickPos();
+                break;
+            case CLAW_CLOSE:
+                clawClose();
+                break;
+            case CLAW_OPEN:
+                clawOpen();
                 break;
         }
     }

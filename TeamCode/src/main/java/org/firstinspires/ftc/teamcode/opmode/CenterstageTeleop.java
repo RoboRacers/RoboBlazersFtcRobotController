@@ -79,49 +79,58 @@ public class CenterstageTeleop extends LinearOpMode {
 
             // arm controls
             if(gamepad2.left_stick_y > 0.2){
-                pixelArm.moveArmBackward(-0.2);
+                pixelArm.transition(Arm.EVENT.TWO_LJ_DOWN);
+                //pixelArm.moveArmBackward(-0.2);
                 telemetry.addLine("Arm Down");
                 telemetry.update();
             }
             if(gamepad2.a){
-                pixelArm.moveArmForward(0);
+                pixelArm.transition(Arm.EVENT.TWO_A);
+                //pixelArm.moveArmForward(0);
                 telemetry.addLine("Arm Stopped");
                 telemetry.update();
             }
             if(gamepad2.left_stick_y < -0.2){
-                pixelArm.moveArmForward(0.2);
+                pixelArm.transition(Arm.EVENT.TWO_LJ_UP);
+                //.moveArmForward(0.2);
                 telemetry.addLine("Arm Up");
                 telemetry.update();
             }
             if(gamepad2.right_stick_y > 0.2){
-                pixelArm.moveLinkPickUp();
+                pixelArm.transition(Arm.EVENT.TWO_RJ_DOWN);
+                //pixelArm.moveLinkPickUp();
                 telemetry.addLine("Link Pick Pos");
                 telemetry.update();
             }
             if(gamepad2.right_stick_y < -0.2) {
-                pixelArm.moveLinkDrop();
+                pixelArm.transition(Arm.EVENT.TWO_RJ_UP);
+                //pixelArm.moveLinkDrop();
                 telemetry.addLine("Link Drop Pos");
                 telemetry.update();
             }
             if(gamepad2.dpad_up){
-                pixelArm.armSetDropPos();
+                pixelArm.transition(Arm.EVENT.TWO_DPAD_UP);
+                //pixelArm.armSetDropPos();
                 telemetry.addLine("Arm Drop Pos");
                 telemetry.update();
             }
             if(gamepad2.dpad_down){
-                pixelArm.armSetPickPos();
+                pixelArm.transition(Arm.EVENT.TWO_DPAD_DOWN);
+                //pixelArm.armSetPickPos();
                 telemetry.addLine("Arm Pick Pos");
                 telemetry.update();
             }
 
             // claw open close
             if(gamepad2.right_bumper){
-                pixelArm.clawOpen();
+                pixelArm.transition(Arm.EVENT.TWO_RB);
+                //pixelArm.clawOpen();
                 telemetry.addLine("Claw Open");
                 telemetry.update();
             }
             if(gamepad2.left_bumper){
-                pixelArm.clawClose();
+                pixelArm.transition(Arm.EVENT.TWO_LB);
+                //pixelArm.clawClose();
                 telemetry.addLine("Claw Close");
                 telemetry.update();
             }
