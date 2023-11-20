@@ -30,13 +30,10 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.modules.Arm;
 import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
@@ -57,10 +54,12 @@ import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Roboblazers Teleop", group="Linear OpMode")
-public class CenterstageTeleop extends LinearOpMode {
+@TeleOp(name="Roboblazers Teleop v0", group="Linear OpMode")
+public class CenterstageTeleop_v0 extends LinearOpMode {
 
     // Declare OpMode members.
+
+    double mult;
     private ElapsedTime runtime = new ElapsedTime();
     //private DcMotorEx pixelArm = null;
 
@@ -85,11 +84,17 @@ public class CenterstageTeleop extends LinearOpMode {
 
             //drive
 
+            if (gamepad1.right_bumper){
+                mult = 1;
+            }else{
+                mult = 0.5;
+            }
+
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            gamepad1.left_stick_y,
+                            -gamepad1.left_stick_y,
                             gamepad1.left_stick_x, //imperfect strafing fix, must be tuned for new drivetrain
-                            gamepad1.right_stick_x
+                            gamepad1.right_stick_x * mult
                     )
             );
 
@@ -99,61 +104,99 @@ public class CenterstageTeleop extends LinearOpMode {
             // arm controls
 
             if(gamepad2.left_stick_y > 0.2){
-                pixelArm.moveArmBackward(-0.2);
+                pixelArm.moveArmBackward(-0.4);
                 telemetry.addLine("Arm Down");
-                telemetry.update();
+                //telemetry.update();
             }
             if(gamepad2.a){
                 pixelArm.moveArmForward(0);
-                telemetry.addLine("Arm Stopped");
-                telemetry.update();
+                //telemetry.addLine("Arm Stopped");
+                //telemetry.update();
             }
             if(gamepad2.left_stick_y < -0.2){
-                pixelArm.moveArmForward(0.2);
+                pixelArm.moveArmForward(0.4);
                 telemetry.addLine("Arm Up");
+                //telemetry.update();
+            }
+
+            if(gamepad2.y){
+                telemetry.addData("ARM POS ", pixelArm.getArmPos());
                 telemetry.update();
             }
-            if(gamepad2.right_stick_y > 0.2){
-                pixelArm.moveLinkPickUp(gamepad2.right_stick_y);
+
+            if(gamepad2.right_stick_y < 0){
+                if(gamepad2.x)
+                    pixelArm.moveLinkPickUp(gamepad2.right_stick_y/2);
                 telemetry.addLine("Link Pick Pos");
                 telemetry.update();
             }
-            if(gamepad2.right_stick_y < -0.2) {
-                pixelArm.moveLinkDrop(gamepad2.right_stick_y);
+            if(gamepad2.right_stick_y > 0) {
+                if(gamepad2.x)
+                    pixelArm.moveLinkDrop(gamepad2.right_stick_y);
                 telemetry.addLine("Link Drop Pos");
                 telemetry.update();
             }
             if(gamepad2.dpad_up){
                 pixelArm.armSetDropPos();
                 telemetry.addLine("Arm Drop Pos");
-                telemetry.update();
+                //telemetry.update();
             }
             if(gamepad2.dpad_down){
                 pixelArm.armSetPickPos();
                 telemetry.addLine("Arm Pick Pos");
-                telemetry.update();
+                //telemetry.update();
+            }
+
+            if(gamepad2.a){
+                pixelArm.armStop();
             }
 
             // claw open close
             if(gamepad2.right_bumper){
                 pixelArm.clawOpen();
                 telemetry.addLine("Claw Open");
-                telemetry.update();
+                //telemetry.update();
             }
             if(gamepad2.left_bumper){
                 pixelArm.clawClose();
                 telemetry.addLine("Claw Close");
-                telemetry.update();
+                //telemetry.update();
             }
 
+
+
             // drone launcher
-            if(gamepad2.a && gamepad2.dpad_up) {
+            if(gamepad2.a && gamepad2.y) {
                 dronelauncher.launchDrone();
+            }
+
+
+
+            if(gamepad1.left_stick_y != 0 || gamepad1.left_stick_x != 0 || gamepad1.right_stick_x != 0){
+                if (gamepad2.left_bumper && gamepad2.right_bumper){
+                    pixelArm.safetyMove();
+
+                }
+            }
+
+            if (gamepad2.left_trigger > 0.1){
+                pixelArm.incrementDown();
+            }
+            if (gamepad2.right_trigger > 0.1){
+                pixelArm.incrementUp();
+            }
+
+            if (gamepad2.y){
+                pixelArm.linkPickPos();
+            }
+
+            if (gamepad2.dpad_left){
+                pixelArm.overideSafety();
             }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            //telemetry.update();
         }
     }
 }

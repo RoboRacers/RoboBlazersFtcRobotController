@@ -14,9 +14,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
 
 
+    Telemetry myTelemetry;
     DcMotorEx pixelArm;
     Servo linkMotor;
     Servo clawMotor;
+
+    double dropPos = 1969;
+
+    double pickPos = 2950;
+
+    double linkPos = 0.66;
     private ElapsedTime runtime = new ElapsedTime();
     static final double     COUNTS_PER_MOTOR_REV    = 5281.1 ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
@@ -108,7 +115,9 @@ public class Arm {
         pixelArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         linkMotor = hardwareMap.get(Servo.class, "linkMotor");
+        linkMotor.setPosition(0.66);
         clawMotor = hardwareMap.get(Servo.class, "clawMotor");
+        myTelemetry = telemetry;
     }
 
 
@@ -116,6 +125,7 @@ public class Arm {
         if (power < 0){
             return;
         } else if (power >= 0) {
+            pixelArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             pixelArm.setPower(power);
         }
     }
@@ -124,49 +134,128 @@ public class Arm {
         if (power > 0){
             return;
         } else if (power <= 0) {
+            pixelArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             pixelArm.setPower(power);
         }
     }
 
     public void armSetPickPos(){
 
-        if(armcurrentState == STATE.PICK_POS || armcurrentState == STATE.ARM_FORWARD) /*And check if it is within limits **/{
-            return;
-        }
-        else if(armcurrentState == STATE.DROP_POS ||
-                armcurrentState == STATE.ARM_BACKWARD){
-            pixelArm.setPower(0);
-            armcurrentState = STATE.ARM_IDLE;
-        }
-        clawOpen();
-        encoderDrive(0.05, 0);
-        //System.out.println("completed set pick pos");
+//        if(armcurrentState == STATE.PICK_POS || armcurrentState == STATE.ARM_FORWARD) /*And check if it is within limits **/{
+//            return;
+//        }
+//        else if(armcurrentState == STATE.DROP_POS ||
+//                armcurrentState == STATE.ARM_BACKWARD){
+//            pixelArm.setPower(-0.20);
+//            armcurrentState = STATE.ARM_IDLE;
+//        }
+//        clawOpen();
+
+        pixelArm.setTargetPosition((int) pickPos);
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.4);
+        linkMotor.setPosition(linkPos);
+
+
     }
+
+
     public void armSetDropPos(){
-        if(armcurrentState == STATE.DROP_POS || armcurrentState == STATE.ARM_BACKWARD) /* And check if it is within limits **/{
-            return;
-        }
-        else if(armcurrentState == STATE.PICK_POS ||
-                armcurrentState == STATE.ARM_FORWARD){
-            pixelArm.setPower(0);
-            armcurrentState = STATE.ARM_IDLE;
-        }
-        clawClose();
-        encoderDrive(0.05, 120);
-        //System.out.println("completed set drop pos");
+        pixelArm.setTargetPosition((int) dropPos);
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.5);
+
+        linkMotor.setPosition(linkPos);
     }
-    public void moveLinkPickUp(){
-        linkMotor.setPosition(1);
+
+    public void armStop(){
+        pixelArm.setPower(0);
+//    }
+//
+//    public void armSetDropPos(){
+//        if(armcurrentState == STATE.DROP_POS || armcurrentState == STATE.ARM_BACKWARD) /* And check if it is within limits **/{
+//            return;
+//        }
+//        else if(armcurrentState == STATE.PICK_POS ||
+//                armcurrentState == STATE.ARM_FORWARD){
+//            pixelArm.setPower(0);
+//            armcurrentState = STATE.ARM_IDLE;
+//        }
+//        clawClose();
+//        encoderDrive(0.05, 120);
+
     }
-    public void moveLinkDrop(){
-        linkMotor.setPosition(0.575);
+
+    public int getArmPos(){
+        return pixelArm.getCurrentPosition();
     }
+
+    public void moveLinkPickUp(double position){
+        //double output = 0.4 + ((1.0 - 0.4) / (1 - -1)) * (position - -1);
+        double output = 0 + ((1.0 - 0) / (1 - -1)) * (position - -1);
+
+        myTelemetry.addData("Ranged Output", output);
+        //myTelemetry.update();
+        linkMotor.setPosition(output);
+    }
+    public void moveLinkDrop(double position){
+
+        //double output = 0.4 + ((1.0 - 0.4) / (1 - -1)) * (position - -1);
+        double output = 0 + ((1.0 - 0) / (1 - -1)) * (position - -1);
+
+        myTelemetry.addData("Ranged Output", output);
+        //myTelemetry.update();
+        linkMotor.setPosition(output);
+    }
+
+    public void linkPickPos(){
+        linkMotor.setPosition(linkPos);
+    }
+
     public void clawOpen(){
-        clawMotor.setPosition(0.75);
+        clawMotor.setPosition(0.55);
     }
     public void clawClose(){
-        clawMotor.setPosition(0.25);
+        clawMotor.setPosition(0);
     }
+
+    public void safetyMove(){
+
+        if (pixelArm.getCurrentPosition() > pickPos-100) {
+
+            pixelArm.setTargetPosition((int) (pickPos-100));
+
+            pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pixelArm.setPower(0.4);
+        }
+    }
+
+    public void incrementUp(){
+        int pos = pixelArm.getCurrentPosition();
+        pixelArm.setTargetPosition((int) (pos-10));
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.2);
+    }
+
+    public void incrementDown(){
+        int pos = pixelArm.getCurrentPosition();
+        pixelArm.setTargetPosition((int) (pos+10));
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.2);
+    }
+
+    public void overideSafety(){
+        pixelArm.setTargetPosition((int) (pickPos-50));
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.2);
+
+        linkMotor.setPosition(0.45);
+    }
+
 
 
 
