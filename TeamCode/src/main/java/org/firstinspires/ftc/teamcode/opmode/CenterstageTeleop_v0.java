@@ -126,7 +126,7 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
 
             if(gamepad2.right_stick_y < 0){
                 if(gamepad2.x)
-                    pixelArm.moveLinkPickUp(gamepad2.right_stick_y/2);
+                    pixelArm.moveLinkPickUp(gamepad2.right_stick_y);
                 telemetry.addLine("Link Pick Pos");
                 telemetry.update();
             }

@@ -22,8 +22,12 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 383.6;
-    public static final double MAX_RPM = 312;
+    //public static final double TICKS_PER_REV = 383.6;
+    public static final double TICKS_PER_REV = 2000;
+
+    //public static final double MAX_RPM = 312;
+
+    public static final double MAX_RPM = 223;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -55,9 +59,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.26 / rpmToVelocity(MAX_RPM); //d
-    public static double kA = 0.007; //i
-    public static double kStatic = 0.01; //p
+    public static double kV = 1.00 / rpmToVelocity(MAX_RPM); //d
+    public static double kA = 0; //i
+    public static double kStatic = 0; //p
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -87,10 +91,19 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 44; // Default - 65
-    public static double MAX_ACCEL = 44; // Default - 45
-    public static double MAX_ANG_VEL = Math.toRadians(230);
-    public static double MAX_ANG_ACCEL = Math.toRadians(230);
+//    public static double MAX_VEL = 44; // Default - 65
+
+    public static double MAX_VEL = 54.7; // Default - 65
+//    public static double MAX_ACCEL = 44; // Default - 45
+    public static double MAX_ACCEL = 4;
+//
+//
+    public static double MAX_ANG_VEL = Math.toRadians(194.67);
+    //public static double MAX_ANG_VEL = 0.013969102822161086;
+
+//    public static double MAX_ANG_ACCEL = Math.toRadians(230);
+
+    public static double MAX_ANG_ACCEL = Math.toRadians(194.67);
 
 
     public static double encoderTicksToInches(double ticks) {

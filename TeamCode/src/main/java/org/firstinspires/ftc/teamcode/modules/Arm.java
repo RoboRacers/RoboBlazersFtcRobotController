@@ -105,12 +105,12 @@ public class Arm {
             case ARM_BACKWARD:
                 moveArmBackward(-0.2);
                 break;
-            case ARM_LINK1_PICK:
-                moveLinkPickUp();
-                break;
-            case ARM_LINK1_DROP:
-                moveLinkDrop();
-                break;
+//            case ARM_LINK1_PICK:
+//                moveLinkPickUp();
+//                break;
+//            case ARM_LINK1_DROP:
+//                moveLinkDrop();
+//                break;
             case DROP_POS:
                 armSetDropPos();
                 break;

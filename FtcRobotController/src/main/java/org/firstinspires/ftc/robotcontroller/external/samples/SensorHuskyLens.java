@@ -113,6 +113,8 @@ public class SensorHuskyLens extends LinearOpMode {
          */
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
+
         telemetry.update();
         waitForStart();
 
