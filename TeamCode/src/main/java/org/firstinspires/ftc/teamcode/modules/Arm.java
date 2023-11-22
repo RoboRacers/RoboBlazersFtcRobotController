@@ -2,12 +2,26 @@ package org.firstinspires.ftc.teamcode.modules;
 
 import static java.lang.Thread.sleep;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -30,6 +44,17 @@ public class Arm {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION);
     static final double     DRIVE_SPEED             = 0.6;
     boolean ARM_MOTOR_BUSY = false;
+
+    private PIDController controller;
+
+    public static double p =0.005 , i= 0, d=0;
+    public static double f = 0;
+
+    public static int target = 100;
+
+    private final double TICKS_IN_DEGREE = 537/360;
+
+    private DcMotorEx armMotor;
 
 
 
@@ -131,12 +156,38 @@ public class Arm {
         pixelArm.setDirection(DcMotorSimple.Direction.REVERSE);
         pixelArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+
         linkMotor = hardwareMap.get(Servo.class, "linkMotor");
         linkMotor.setPosition(0.66);
         clawMotor = hardwareMap.get(Servo.class, "clawMotor");
         myTelemetry = telemetry;
+
+        controller = new PIDController(p,i,d);
+        //armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
     }
 
+
+    public void resetEncoder(){
+        pixelArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    public void moveArmPIDF(){
+        controller.setPID(p, i, d);
+        int armPos = pixelArm.getCurrentPosition();
+
+
+        double pid = controller.calculate(armPos, target);
+
+
+        double ff = Math.cos(Math.toRadians(target/TICKS_IN_DEGREE)) * f;
+
+        double power = pid + ff;
+
+        pixelArm.setPower(power);
+
+    }
 
     public void moveArmForward(double power){
         if (power < 0){
@@ -271,6 +322,56 @@ public class Arm {
         pixelArm.setPower(0.2);
 
         linkMotor.setPosition(0.45);
+    }
+
+    public void dropInAuton() throws InterruptedException {
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        controller.setPID(p, i, d);
+        int armPos = pixelArm.getCurrentPosition();
+
+
+        double pid = controller.calculate(armPos, 475);
+
+
+        double ff = Math.cos(Math.toRadians(475/TICKS_IN_DEGREE)) * f;
+
+        double power = pid + ff;
+
+        pixelArm.setPower(power);
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        sleep(2000);
+
+        linkMotor.setPosition(0.146);
+
+    }
+
+    public void startPosInAuton() throws InterruptedException {
+
+        controller.setPID(p, i, d);
+        int armPos = pixelArm.getCurrentPosition();
+
+
+        double pid = controller.calculate(armPos, 330);
+
+
+        double ff = Math.cos(Math.toRadians(330/TICKS_IN_DEGREE)) * f;
+
+        double power = pid + ff;
+
+        pixelArm.setPower(power);
+
+        myTelemetry.addData("ARM POS", pixelArm.getCurrentPosition());
+        myTelemetry.update();
+
+        sleep(2000);
+
+        linkMotor.setPosition(0.375);
+
+        clawClose();
     }
 
 

@@ -82,6 +82,10 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if(gamepad2.dpad_right){
+                pixelArm.resetEncoder();
+            }
+
             //drive
 
             if (gamepad1.right_bumper){
