@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.modules;
 
 import static java.lang.Thread.sleep;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,21 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
-
 
     Telemetry myTelemetry;
     DcMotorEx pixelArm;
@@ -155,10 +141,11 @@ public class Arm {
         pixelArm = hardwareMap.get(DcMotorEx.class, "armMotor");
         pixelArm.setDirection(DcMotorSimple.Direction.REVERSE);
         pixelArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         linkMotor = hardwareMap.get(Servo.class, "linkMotor");
-        linkMotor.setPosition(0.66);
+        //linkMotor.setPosition(0.66);
         clawMotor = hardwareMap.get(Servo.class, "clawMotor");
         myTelemetry = telemetry;
 
@@ -288,6 +275,10 @@ public class Arm {
         clawMotor.setPosition(0);
     }
 
+    public void dropOnePixel(){
+        clawMotor.setPosition(0.8);
+    }
+
     public void safetyMove(){
 
         if (pixelArm.getCurrentPosition() > pickPos-100) {
@@ -326,22 +317,10 @@ public class Arm {
 
     public void dropInAuton() throws InterruptedException {
 
-        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pixelArm.setTargetPosition((int) (100));
 
-        controller.setPID(p, i, d);
-        int armPos = pixelArm.getCurrentPosition();
-
-
-        double pid = controller.calculate(armPos, 475);
-
-
-        double ff = Math.cos(Math.toRadians(475/TICKS_IN_DEGREE)) * f;
-
-        double power = pid + ff;
-
-        pixelArm.setPower(power);
-
-        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.2);
 
         sleep(2000);
 
@@ -349,33 +328,56 @@ public class Arm {
 
     }
 
-    public void startPosInAuton() throws InterruptedException {
-
+    public void startPosInAuton(int target) throws InterruptedException {
+        pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myTelemetry.addData("Target Pos ", target);
         controller.setPID(p, i, d);
         int armPos = pixelArm.getCurrentPosition();
+        myTelemetry.addData("current ARM position", armPos);
 
-
-        double pid = controller.calculate(armPos, 330);
-
-
-        double ff = Math.cos(Math.toRadians(330/TICKS_IN_DEGREE)) * f;
-
+        double pid = controller.calculate(armPos, target);
+        double ff = Math.cos(Math.toRadians(target/TICKS_IN_DEGREE)) * f;
         double power = pid + ff;
+        myTelemetry.addData("current power", power);
 
         pixelArm.setPower(power);
-
         myTelemetry.addData("ARM POS", pixelArm.getCurrentPosition());
         myTelemetry.update();
-
         sleep(2000);
-
         linkMotor.setPosition(0.375);
-
         clawClose();
     }
 
+    public void autonPosMaintain(int target1) throws InterruptedException {
+        pixelArm.setTargetPosition((int) (target1));
 
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.2);
 
+        while (pixelArm.getCurrentPosition() != target1){
+            myTelemetry.addData("Current Arm Pos: ", pixelArm.getCurrentPosition());
+            sleep(1000);
+        }
+
+        double stallPower = 0.01;
+        myTelemetry.addData("Target pos reached, setting stall power ", stallPower );
+
+        pixelArm.setPower(stallPower);
+
+    }
+
+    public void holdPos(){
+        double degreesInTicks = 360/537; //measure and change
+        double angleOfArm = pixelArm.getCurrentPosition() * degreesInTicks;
+
+        double totalAngle = 180.0; // Total angle range
+        double totalPower = 0.2;   // Total power range
+
+        // Calculate power based on the linear relationship between angle and power
+        double power = (angleOfArm / totalAngle) * totalPower - (totalPower / 2);
+
+        pixelArm.setPower(power);
+    }
 
     // 120 degrees --> need to travel 1760 ticks
     public void encoderDrive(double speed, double turnAngle) {

@@ -40,112 +40,114 @@ public class TeamPropDetectionPipeline {
 
     static class TeamPropPipeline extends OpenCvPipeline {
 
+        Mat gray = new Mat();
+        Mat shadowMask = new Mat();
+        Mat labImage = new Mat();
+        List<Mat> labChannels = new ArrayList<>();
+        Mat noShadow = new Mat();
+        Mat firstGray = new Mat();
+        Mat binaryImg = new Mat();
+        Mat blackCountImg = new Mat();
+
+        int frameCount = 1;
 
 
         private String direction = "";
 
         @Override
         public Mat processFrame(Mat frame) {
-            Mat gray = new Mat();
-            Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY);
 
-            Imgproc.medianBlur(gray, gray, 15);
+            if (frameCount == 4) {
+                Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY);
 
-            // Apply adaptive thresholding to identify shadows
-            Mat shadowMask = new Mat();
-            Imgproc.adaptiveThreshold(gray, shadowMask, 0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 11, 10);
+                Imgproc.medianBlur(gray, gray, 15);
 
-            // Invert the shadow mask
-            Core.bitwise_not(shadowMask, shadowMask);
+                // Apply adaptive thresholding to identify shadows
+                Imgproc.adaptiveThreshold(gray, shadowMask, 0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 11, 10);
 
-            // Convert the original image to LAB color space
-            Mat labImage = new Mat();
-            Imgproc.cvtColor(frame, labImage, Imgproc.COLOR_BGR2Lab);
+                // Invert the shadow mask
+                Core.bitwise_not(shadowMask, shadowMask);
 
-            // Split LAB image into L, A, and B channels
-            List<Mat> labChannels = new ArrayList<>();
-            Core.split(labImage, labChannels);
+                // Convert the original image to LAB color space
+                Imgproc.cvtColor(frame, labImage, Imgproc.COLOR_BGR2Lab);
 
-            // Replace L channel with the shadow-masked L channel
-            labChannels.set(0, shadowMask);
+                // Split LAB image into L, A, and B channels
+                Core.split(labImage, labChannels);
 
-            // Merge LAB channels back into one image
-            Core.merge(labChannels, labImage);
+                // Replace L channel with the shadow-masked L channel
+                labChannels.set(0, shadowMask);
 
-            // Convert LAB image back to BGR
-            Mat noShadow = new Mat();
-            Imgproc.cvtColor(labImage, noShadow, Imgproc.COLOR_Lab2BGR);
+                // Merge LAB channels back into one image
+                Core.merge(labChannels, labImage);
+
+                // Convert LAB image back to BGR
+                Imgproc.cvtColor(labImage, noShadow, Imgproc.COLOR_Lab2BGR);
 
 
+                firstGray = noShadow.clone();
 
-            Mat firstGray = new Mat();
-            firstGray = noShadow.clone();
+                Imgproc.cvtColor(noShadow, firstGray, Imgproc.COLOR_BGR2GRAY);
 
-            Imgproc.cvtColor(noShadow,firstGray,Imgproc.COLOR_BGR2GRAY);
-
-            Mat binaryImg = new Mat();
-            Imgproc.threshold(firstGray, binaryImg, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+                Imgproc.threshold(firstGray, binaryImg, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 
 
-            Mat blackCountImg = new Mat();
+                blackCountImg = binaryImg.clone();
 
-            blackCountImg = binaryImg.clone();
+                int leftBlackPixelCount = 0;
 
-            int leftBlackPixelCount = 0;
+                int leftImageWidth = blackCountImg.cols() / 3;
 
-            int leftImageWidth = blackCountImg.cols()/3;
-
-            for (int row = 0; row < blackCountImg.rows(); row++) {
-                for (int col = 0; col < leftImageWidth; col++) {
-                    double pixelValue = blackCountImg.get(row, col)[0];
-                    if (pixelValue == 0) {
-                        leftBlackPixelCount++;
+                for (int row = 0; row < blackCountImg.rows(); row++) {
+                    for (int col = 0; col < leftImageWidth; col++) {
+                        double pixelValue = blackCountImg.get(row, col)[0];
+                        if (pixelValue == 0) {
+                            leftBlackPixelCount++;
+                        }
                     }
                 }
-            }
 
 
+                int centerBlackPixelCount = 0;
 
-            int centerBlackPixelCount = 0;
+                int centerImageWidth = 2 * (blackCountImg.cols() / 3);
 
-            int centerImageWidth = 2 * (blackCountImg.cols()/3);
-
-            for (int row = 0; row < blackCountImg.rows(); row++) {
-                for (int col = leftImageWidth; col < centerImageWidth; col++) {
-                    double pixelValue = blackCountImg.get(row, col)[0];
-                    if (pixelValue == 0) {
-                        centerBlackPixelCount++;
+                for (int row = 0; row < blackCountImg.rows(); row++) {
+                    for (int col = leftImageWidth; col < centerImageWidth; col++) {
+                        double pixelValue = blackCountImg.get(row, col)[0];
+                        if (pixelValue == 0) {
+                            centerBlackPixelCount++;
+                        }
                     }
                 }
-            }
 
 
+                int rightBlackPixelCount = 0;
 
-            int rightBlackPixelCount = 0;
+                int rightImageWidth = blackCountImg.cols();
 
-            int rightImageWidth = blackCountImg.cols();
-
-            for (int row = 0; row < blackCountImg.rows(); row++) {
-                for (int col = centerImageWidth; col < rightImageWidth; col++) {
-                    double pixelValue = blackCountImg.get(row, col)[0];
-                    if (pixelValue == 0) {
-                        rightBlackPixelCount++;
+                for (int row = 0; row < blackCountImg.rows(); row++) {
+                    for (int col = centerImageWidth; col < rightImageWidth; col++) {
+                        double pixelValue = blackCountImg.get(row, col)[0];
+                        if (pixelValue == 0) {
+                            rightBlackPixelCount++;
+                        }
                     }
                 }
+
+
+                if (leftBlackPixelCount > centerBlackPixelCount && leftBlackPixelCount > rightBlackPixelCount) {
+                    direction = "left";
+                } else if (rightBlackPixelCount > leftBlackPixelCount && rightBlackPixelCount > centerBlackPixelCount) {
+                    direction = "right";
+                } else {
+                    direction = "center";
+                }
+                frameCount = 1;
+                return frame;
+            } else if (frameCount != 4) {
+                frameCount++;
             }
-
-
-
-            if (leftBlackPixelCount > centerBlackPixelCount && leftBlackPixelCount > rightBlackPixelCount){
-                direction = "left";
-            } else if (rightBlackPixelCount > leftBlackPixelCount && rightBlackPixelCount > centerBlackPixelCount) {
-                direction = "right";
-            }else{
-                direction = "center";
-            }
-
-            return binaryImg;
-
+            return frame;
         }
 
 

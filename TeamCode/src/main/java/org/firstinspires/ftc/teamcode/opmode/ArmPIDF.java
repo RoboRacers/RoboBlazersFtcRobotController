@@ -38,30 +38,18 @@ public class ArmPIDF  extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
             controller.setPID(p, i, d);
             int armPos = armMotor.getCurrentPosition();
             telemetry.addData("pos ",armPos);
-
-
             double pid = controller.calculate(armPos, target);
             telemetry.addData("pid ",pid);
-
-
             double ff = Math.cos(Math.toRadians(target/TICKS_IN_DEGREE)) * f;
             telemetry.addData("ff ",ff);
-
-
             double power = pid + ff;
-
             telemetry.addData("power ",power);
             telemetry.update();
             armMotor.setPower(power);
-
-
-
-            //  sleep(5000);  // pause to display final telemetry message.
-
+            //sleep(5000);  // pause to display final telemetry message.
         }
         // Pace this loop so jaw action is reasonable speed.
     }
