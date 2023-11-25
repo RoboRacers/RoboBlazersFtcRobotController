@@ -44,23 +44,41 @@ public class ArmTest extends LinearOpMode {
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
 
-                if(gamepad2.dpad_down){
-                    pixelArm.moveArmBackward(-0.2);
+                if(gamepad2.left_stick_y > 0.2){
+                    pixelArm.transition(Arm.EVENT.TWO_LJ_DOWN);
                     telemetry.addLine("Arm Down");
                     telemetry.update();
                 }
                 if(gamepad2.a){
-                    pixelArm.moveArmForward(0);
-                    telemetry.addLine("Arm stopped");
+                    pixelArm.transition(Arm.EVENT.TWO_A);
+                    telemetry.addLine("Arm Stopped");
                     telemetry.update();
                 }
-                if(gamepad2.dpad_up){
-                    pixelArm.moveArmForward(0.2);
+                if(gamepad2.left_stick_y < -0.2){
+                    pixelArm.transition(Arm.EVENT.TWO_LJ_UP);
                     telemetry.addLine("Arm Up");
                     telemetry.update();
                 }
-
-
+                if(gamepad2.right_stick_y > 0.2){
+                    pixelArm.transition(Arm.EVENT.TWO_RJ_UP);
+                    telemetry.addLine("Link Pick Pos");
+                    telemetry.update();
+                }
+                if(gamepad2.right_stick_y < -0.2) {
+                    pixelArm.transition(Arm.EVENT.TWO_RJ_DOWN);
+                    telemetry.addLine("Link Drop Pos");
+                    telemetry.update();
+                }
+                if(gamepad2.dpad_up){
+                    pixelArm.transition(Arm.EVENT.TWO_DPAD_UP);
+                    telemetry.addLine("Arm Drop Pos");
+                    telemetry.update();
+                }
+                if(gamepad2.dpad_down){
+                    pixelArm.transition(Arm.EVENT.TWO_DPAD_DOWN);
+                    telemetry.addLine("Arm Pick Pos");
+                    telemetry.update();
+                }
 
 
                 // Show the elapsed game time and wheel power.
