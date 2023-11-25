@@ -40,11 +40,11 @@ public class TeamPropDetectionPipeline {
 
     static class TeamPropPipeline extends OpenCvPipeline {
 
-        Mat gray = new Mat();
-        Mat shadowMask = new Mat();
-        Mat labImage = new Mat();
-        List<Mat> labChannels = new ArrayList<>();
-        Mat noShadow = new Mat();
+//        Mat gray = new Mat();
+//        Mat shadowMask = new Mat();
+//        Mat labImage = new Mat();
+//        List<Mat> labChannels = new ArrayList<>();
+//        Mat noShadow = new Mat();
         Mat firstGray = new Mat();
         Mat binaryImg = new Mat();
         Mat blackCountImg = new Mat();
@@ -58,35 +58,35 @@ public class TeamPropDetectionPipeline {
         public Mat processFrame(Mat frame) {
 
             if (frameCount == 4) {
-                Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY);
+//                Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY);
+//
+//                Imgproc.medianBlur(gray, gray, 15);
+//
+//                // Apply adaptive thresholding to identify shadows
+//                Imgproc.adaptiveThreshold(gray, shadowMask, 0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 11, 10);
+//
+//                // Invert the shadow mask
+//                Core.bitwise_not(shadowMask, shadowMask);
+//
+//                // Convert the original image to LAB color space
+//                Imgproc.cvtColor(frame, labImage, Imgproc.COLOR_BGR2Lab);
+//
+//                // Split LAB image into L, A, and B channels
+//                Core.split(labImage, labChannels);
+//
+//                // Replace L channel with the shadow-masked L channel
+//                labChannels.set(0, shadowMask);
+//
+//                // Merge LAB channels back into one image
+//                Core.merge(labChannels, labImage);
+//
+//                // Convert LAB image back to BGR
+//                Imgproc.cvtColor(labImage, noShadow, Imgproc.COLOR_Lab2BGR);
+//
+//
+//                firstGray = noShadow.clone();
 
-                Imgproc.medianBlur(gray, gray, 15);
-
-                // Apply adaptive thresholding to identify shadows
-                Imgproc.adaptiveThreshold(gray, shadowMask, 0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 11, 10);
-
-                // Invert the shadow mask
-                Core.bitwise_not(shadowMask, shadowMask);
-
-                // Convert the original image to LAB color space
-                Imgproc.cvtColor(frame, labImage, Imgproc.COLOR_BGR2Lab);
-
-                // Split LAB image into L, A, and B channels
-                Core.split(labImage, labChannels);
-
-                // Replace L channel with the shadow-masked L channel
-                labChannels.set(0, shadowMask);
-
-                // Merge LAB channels back into one image
-                Core.merge(labChannels, labImage);
-
-                // Convert LAB image back to BGR
-                Imgproc.cvtColor(labImage, noShadow, Imgproc.COLOR_Lab2BGR);
-
-
-                firstGray = noShadow.clone();
-
-                Imgproc.cvtColor(noShadow, firstGray, Imgproc.COLOR_BGR2GRAY);
+                Imgproc.cvtColor(frame, firstGray, Imgproc.COLOR_BGR2GRAY);
 
                 Imgproc.threshold(firstGray, binaryImg, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 

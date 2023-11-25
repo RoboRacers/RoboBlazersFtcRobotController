@@ -47,7 +47,7 @@ public class RoboBlazersAutoOp_v0 extends LinearOpMode {
             teamPropDetectionPipeline = new TeamPropDetectionPipeline(camera, telemetry);
 
             Trajectory centerPos = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(4)
+                    .strafeLeft(4)
                     .build();
 
             Trajectory trajectory1 =  drive.trajectoryBuilder(centerPos.end())
@@ -58,9 +58,17 @@ public class RoboBlazersAutoOp_v0 extends LinearOpMode {
                     .back(2)
                     .build();
 
-            Trajectory goToBackdrop = drive.trajectoryBuilder(back.end())
+            Trajectory goLittleForward = drive.trajectoryBuilder(centerPos.end())
+                .forward(10)
+                .build();
+
+            Trajectory goToBackdrop = drive.trajectoryBuilder(goLittleForward.end())
                     .strafeRight(30)
                     .build();
+
+        Trajectory goLittleRight = drive.trajectoryBuilder(trajectory1.end())
+                .strafeLeft(4)
+                .build();
 
             while (System.currentTimeMillis() - startTime < maxTimer) {
 
@@ -97,9 +105,12 @@ public class RoboBlazersAutoOp_v0 extends LinearOpMode {
                     Pose2d poseEstimate = drive.getPoseEstimate();
                     sleep(2000);
                     drive.followTrajectory(trajectory1);
-                    pixelArm.dropOnePixel();
-                    sleep(1000);
+                    pixelArm.clawClose();
                     drive.followTrajectory(back);
+                    sleep(1000);
+                    drive.followTrajectory(goLittleRight);
+                    sleep(2000);
+                    drive.followTrajectory(goLittleForward);
                     sleep(2000);
                     drive.followTrajectory(goToBackdrop);
                     break;

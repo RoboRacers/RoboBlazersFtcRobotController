@@ -30,6 +30,6 @@ public class TeamPropDetectionOpMode extends LinearOpMode {
             telemetry.update();
         }
 
-        camera.closeCameraDevice();
+        //camera.closeCameraDevice();
     }
 }

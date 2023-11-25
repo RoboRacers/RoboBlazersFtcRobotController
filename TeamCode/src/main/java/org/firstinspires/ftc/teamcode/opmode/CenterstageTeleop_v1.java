@@ -39,7 +39,6 @@ import org.firstinspires.ftc.teamcode.modules.Arm;
 import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
 import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 
 
 
@@ -56,13 +55,14 @@ import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Roboblazers Teleop v0", group="Linear OpMode")
-public class CenterstageTeleop_v0 extends LinearOpMode {
+@TeleOp(name="Roboblazers Teleop v1", group="Linear OpMode")
+public class CenterstageTeleop_v1 extends LinearOpMode {
 
     // Declare OpMode members.
 
     double mult;
     private ElapsedTime runtime = new ElapsedTime();
+
 
     //private DcMotorEx pixelArm = null;
 
@@ -76,6 +76,16 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Arm pixelArm = new Arm(hardwareMap, telemetry);
+        ArmStates armStates = new ArmStates(pixelArm);
+
+        armStates.transition(ArmStates.EVENT.AUTON_START);
+
+        //ArmStates.EVENT = AUTON_START;
+
+
+
+
+
         DroneLauncher dronelauncher = new DroneLauncher(hardwareMap, telemetry);
 
         // Wait for the game to start (driver presses PLAY)
