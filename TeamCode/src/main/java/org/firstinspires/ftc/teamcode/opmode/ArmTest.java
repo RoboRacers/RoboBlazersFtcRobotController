@@ -80,6 +80,17 @@ public class ArmTest extends LinearOpMode {
                     telemetry.update();
                 }
 
+                if(gamepad2.right_bumper){
+                    pixelArm.transition(Arm.EVENT.TWO_RB);
+                    telemetry.addLine("Claw Open");
+                    telemetry.update();
+                }
+                if(gamepad2.left_bumper){
+                    pixelArm.transition(Arm.EVENT.TWO_LB);
+                    telemetry.addLine("Claw Close");
+                    telemetry.update();
+                }
+
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());

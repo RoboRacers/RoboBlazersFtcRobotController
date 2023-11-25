@@ -136,12 +136,12 @@ public class CenterstageTeleop extends LinearOpMode {
 
             // claw open close
             if(gamepad2.right_bumper){
-                pixelArm.clawOpen();
+                pixelArm.transition(Arm.EVENT.TWO_RB);
                 telemetry.addLine("Claw Open");
                 telemetry.update();
             }
             if(gamepad2.left_bumper){
-                pixelArm.clawClose();
+                pixelArm.transition(Arm.EVENT.TWO_LB);
                 telemetry.addLine("Claw Close");
                 telemetry.update();
             }
