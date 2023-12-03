@@ -93,7 +93,7 @@ public class Arm {
         GO_ARM_GET_POS,
         GO_MOVE_LINK_UP,
         GO_MOVE_LINK_DOWN,
-        GO_CLAW_DROP_ONE_PIXEL,
+        GO_CLAW_DROP_ONE_PIXEL, TWO_LJ_DOWN, TWO_A, TWO_LJ_UP, TWO_RJ_UP, TWO_RJ_DOWN, TWO_DPAD_UP, TWO_DPAD_DOWN, TWO_RB, TWO_LB,
 
     }
 
