@@ -42,7 +42,7 @@ public class AutonRedBack extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence RedBackLeft = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        TrajectorySequence RedBackRight = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
 
                 .forward(8)
                 .strafeRight(7)
@@ -69,13 +69,13 @@ public class AutonRedBack extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(RedBackLeft.start());
+        //drive.setPoseEstimate(RedBackRight.start());
 
-        drive.followTrajectorySequence(RedBackLeft);
+        //drive.followTrajectorySequence(RedBackRight);
 
-        drive.setPoseEstimate(RedBackCenter.start());
+        //drive.setPoseEstimate(RedBackCenter.start());
 
-        drive.followTrajectorySequence(RedBackCenter);
+        //drive.followTrajectorySequence(RedBackCenter);
     }
 
 }

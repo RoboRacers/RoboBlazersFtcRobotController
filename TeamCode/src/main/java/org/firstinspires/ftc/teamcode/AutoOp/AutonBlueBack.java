@@ -42,7 +42,7 @@ public class AutonBlueBack extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence BlueBackRight = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        TrajectorySequence BlueBackLeft = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
 
                 .forward(8)
                 .strafeLeft(7)
@@ -68,14 +68,14 @@ public class AutonBlueBack extends LinearOpMode {
         }
         waitForStart();
         if (isStopRequested()) return;
-
-        drive.setPoseEstimate(BlueBackRight.start());
-
-        drive.followTrajectorySequence(BlueBackRight);
-
-        drive.setPoseEstimate(BlueBackCenter.start());
-
-        drive.followTrajectorySequence(BlueBackCenter);
+//
+//        drive.setPoseEstimate(BlueBackRight.start());
+//
+//        drive.followTrajectorySequence(BlueBackRight);
+//
+//        drive.setPoseEstimate(BlueBackCenter.start());
+//
+//        drive.followTrajectorySequence(BlueBackCenter);
     }
 
 }

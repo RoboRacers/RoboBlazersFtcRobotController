@@ -61,7 +61,7 @@ public class AutonRedFront extends LinearOpMode {
                 //.turn(180)
                 .build();
 
-        TrajectorySequence AutonRedRight = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        TrajectorySequence AutonRedLeft = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .forward(8)
                 .strafeLeft(7)
                 .forward(24)
@@ -82,9 +82,14 @@ public class AutonRedFront extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(untitled0.start());
+//        drive.setPoseEstimate(AutonRedCenter.start());
 
-        drive.followTrajectorySequence(untitled0);
+//        drive.followTrajectorySequence(AutonRedCenter);
+
+
+//        drive.setPoseEstimate(AutonRedLeft.start());
+
+//        drive.followTrajectorySequence(AutonRedLeft);
     }
 
 }

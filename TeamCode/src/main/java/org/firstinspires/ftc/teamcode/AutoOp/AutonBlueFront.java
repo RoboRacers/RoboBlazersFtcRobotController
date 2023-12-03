@@ -82,9 +82,13 @@ public class AutonBlueFront extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(untitled0.start());
+        //drive.setPoseEstimate(AutonBlueRight.start());
 
-        drive.followTrajectorySequence(untitled0);
+        //drive.followTrajectorySequence(AutonBlueRight);
+
+        //drive.setPoseEstimate(AutonBlueCenter.start());
+
+        //drive.followTrajectorySequence(AutonBlueCenter);
     }
 
 }
