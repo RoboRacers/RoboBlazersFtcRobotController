@@ -20,16 +20,16 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     //https://www.gobilda.com/odometry-pod-43mm-width-48mm-wheel/
     public static double WHEEL_RADIUS = 0.944882;
     public static double GEAR_RATIO = 1;
-    public static double LATERAL_DISTANCE = 16.75;
-    public static double FORWARD_OFFSET = -13;
+    public static double LATERAL_DISTANCE = 8.3;
+    public static double FORWARD_OFFSET = 5;
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 0.983;
     private Encoder leftEncoder, rightEncoder, frontEncoder;
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
-                new Pose2d(2, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(2.5 -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, -1, Math.toRadians(90)) // front
+                new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
+                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Bl")); // Port Number 0
@@ -37,6 +37,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Fl")); // Port Number 2
 
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
         //TBD to check
 //        frontEncoder.setDirection(Encoder.Direction.REVERSE);
 

@@ -37,10 +37,39 @@ public class AutonTest extends LinearOpMode {
                 new TranslationalVelocityConstraint(0.2),
                 new AngularVelocityConstraint(1)));
 
+        /* Notes:
+        1. 90 deg is facing red
+        2. 0 deg is facing backdrop
+        3. -x toward audience
+        4. +x towards backdrop
+        5. -y towards red
+        6. +y towards blue
+         */
+
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-33, 58, Math.toRadians(90)))
-                .splineTo(new Vector2d(-34, 58), Math.toRadians(180))
+        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                //.lineTo(new Vector2d(36, 0))
+                //.lineTo(new Vector2d(-36.00, -20.00))
+                //.lineTo(new Vector2d(-50.00, -37.00))
+                //.lineTo(new Vector2d(-50, -7.00))
+                //.turn(Math.toRadians(-90)) //change after tuning to -90
+                //.lineTo(new Vector2d(10, -7))
+
+                .forward(37)
+                .back(10)
+                .strafeRight(15)
+                .forward(28)
+                .turn(Math.toRadians(90))
+                .strafeLeft(2)
+                .back(72)
+                .strafeRight(26)
+                .back(30)
+                //.turn(180)
                 .build();
+
+
+
+
 
 
 
@@ -49,7 +78,10 @@ public class AutonTest extends LinearOpMode {
         }
         waitForStart();
         if (isStopRequested()) return;
-        drive.followTrajectorySequence(traj2);
+
+        drive.setPoseEstimate(untitled0.start());
+
+        drive.followTrajectorySequence(untitled0);
     }
 
 }

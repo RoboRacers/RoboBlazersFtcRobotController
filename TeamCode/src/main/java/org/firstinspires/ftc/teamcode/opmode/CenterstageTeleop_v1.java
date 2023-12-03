@@ -97,6 +97,7 @@ public class CenterstageTeleop_v1 extends LinearOpMode {
 
             if(gamepad2.dpad_right){
                 pixelArm.resetEncoder();
+                //ArmStates.EVENT.
             }
 
             //drive
