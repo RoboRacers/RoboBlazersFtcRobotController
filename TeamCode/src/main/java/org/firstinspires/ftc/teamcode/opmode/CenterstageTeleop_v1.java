@@ -34,9 +34,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.modules.Arm;
 import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
+import org.firstinspires.ftc.teamcode.modules.Lift;
 import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 
@@ -62,6 +64,7 @@ public class CenterstageTeleop_v1 extends LinearOpMode {
 
     double mult;
     private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor lift = null;
 
 
     //private DcMotorEx pixelArm = null;
@@ -211,6 +214,41 @@ public class CenterstageTeleop_v1 extends LinearOpMode {
 
             if (gamepad2.dpad_left){
                 pixelArm.overideSafety();
+            }
+            telemetry.addData("Status", "Initialized");
+            telemetry.update();
+
+            Lift winchLift = new Lift(hardwareMap, telemetry);
+
+            lift.setDirection(DcMotor.Direction.REVERSE);
+
+            waitForStart();
+            runtime.reset();
+
+            while (opModeIsActive()) {
+
+                double liftPower;
+
+                double liftdrive = -gamepad1.left_stick_y;
+                liftPower = Range.clip(liftdrive, -1.0, 1.0) ;
+
+                // Send calculated power to wheels
+                lift.setPower(liftPower);
+
+                if (gamepad1.right_trigger > 0){
+                    winchLift.transition(Lift.EVENT.ROBOT_UNDER_TRUSS);
+                }
+                if (gamepad1.left_trigger > 0){
+                    winchLift.transition(Lift.EVENT.LIFT_GRABBED_TRUSS);
+                }
+
+
+
+
+                // Show the elapsed game time and wheel power.
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+                telemetry.addData("Lift", "lift (%.2f)", liftPower);
+                telemetry.update();
             }
 
             // Show the elapsed game time and wheel power.
