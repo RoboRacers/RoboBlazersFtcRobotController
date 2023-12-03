@@ -44,7 +44,8 @@ public class ArmStates extends StateMachine {
         DROPPING_AT_BACKDROP,
         DRIVING_WITHOUT_PIXEL,
         ALLIGN_WITH_PIXEL,
-        PICK_UP_PIXEL
+        PICK_UP_PIXEL,
+
     }
 
     public ArmStates(Arm myArm){

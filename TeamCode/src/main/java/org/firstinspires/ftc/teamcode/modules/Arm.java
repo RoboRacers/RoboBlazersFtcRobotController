@@ -49,27 +49,52 @@ public class Arm {
 
 
     public enum STATE {
-        ARM_FORWARD,
-        ARM_BACKWARD,
-        DROP_POS,
-        PICK_POS,
-        ARM_LINK1_PICK,
-        ARM_LINK1_DROP,
+        //Arm States
+
+        ARM_HOLD_POS,
+        ARM_START,
+        ARM_MOVE_FOR_DRIVING,
+        ARM_MOVE_UP,
+        ARM_MOVE_DOWN,
+        ARM_INCREMENT_UP,
+        ARM_INCREMENT_DOWN,
+        ARM_MOVE_PICK,
+        ARM_MOVE_DROP,
+        ARM_MOVE_DROP_AUTON,
+        ARM_SAFETY_MOVE,
+        ARM_RESET_ENCODER, //might be removed or changed to POT
+        ARM_GET_POS,
+
+        //Link States
+
+        MOVE_LINK_UP,
+        MOVE_LINK_DOWN,
+
+        //Claw States
+
         CLAW_OPEN,
         CLAW_CLOSE,
-        ARM_IDLE,
+        CLAW_DROP_ONE_PIXEL
     }
 
     public enum EVENT {
-        TWO_LJ_DOWN,
-        TWO_LJ_UP,
-        TWO_DPAD_UP,
-        TWO_DPAD_DOWN,
-        TWO_RJ_UP,
-        TWO_RJ_DOWN,
-        TWO_LB,
-        TWO_RB,
-        TWO_A
+        AUTON_START,
+        DETECTING_TP,
+        DRIVING_WITH_PIXEL,
+        DROPPING_AT_TP,
+        DROPPING_AT_BACKDROP,
+        DRIVING_WITHOUT_PIXEL,
+        ALLIGN_WITH_PIXEL,
+        PICK_UP_PIXEL,
+        GO_ARM_TO_DROP,
+        GO_ARM_MOVE_DROP_AUTON,
+        GO_ARM_SAFTEY_MOVE,
+        GO_ARM_RESET_ENCODER,
+        GO_ARM_GET_POS,
+        GO_MOVE_LINK_UP,
+        GO_MOVE_LINK_DOWN,
+        GO_CLAW_DROP_ONE_PIXEL,
+
     }
 
     STATE currentState;
@@ -81,39 +106,63 @@ public class Arm {
 
     public void transition(EVENT event) {
         switch (event) {
-            case TWO_LJ_DOWN:
-                currentState = Arm.STATE.ARM_FORWARD;
+            case AUTON_START:
+                currentState = Arm.STATE.ARM_HOLD_POS;
                 break;
-            case TWO_LJ_UP:
-                currentState = Arm.STATE.ARM_BACKWARD;
+            case DETECTING_TP:
+                currentState = Arm.STATE.ARM_START;
                 break;
-            case TWO_DPAD_UP:
-                currentState = Arm.STATE.DROP_POS;
+            case DRIVING_WITH_PIXEL:
+                currentState = Arm.STATE.ARM_MOVE_FOR_DRIVING;
                 break;
-            case TWO_DPAD_DOWN:
-                currentState = Arm.STATE.PICK_POS;
+            case DROPPING_AT_TP:
+                currentState = Arm.STATE.ARM_MOVE_UP;
                 break;
-            case TWO_RJ_UP:
-                currentState = Arm.STATE.ARM_LINK1_PICK;
+            case DROPPING_AT_BACKDROP:
+                currentState = Arm.STATE.ARM_MOVE_DOWN;
                 break;
-            case TWO_RJ_DOWN:
-                currentState = Arm.STATE.ARM_LINK1_DROP;
+            case DRIVING_WITHOUT_PIXEL:
+                currentState = Arm.STATE.ARM_INCREMENT_UP;
                 break;
-            case TWO_LB:
-                currentState = Arm.STATE.CLAW_OPEN;
+            case ALLIGN_WITH_PIXEL:
+                currentState = Arm.STATE.ARM_INCREMENT_DOWN;
                 break;
-            case TWO_RB:
-                currentState = Arm.STATE.CLAW_CLOSE;
+            case PICK_UP_PIXEL:
+                currentState = Arm.STATE.ARM_MOVE_PICK;
+                break;
+            case GO_ARM_TO_DROP:
+                currentState = Arm.STATE.ARM_MOVE_DROP;
+                break;
+            case GO_ARM_MOVE_DROP_AUTON:
+                currentState = Arm.STATE.ARM_MOVE_DROP_AUTON;
+                break;
+            case GO_ARM_SAFTEY_MOVE:
+                currentState = Arm.STATE.ARM_SAFETY_MOVE;
+                break;
+            case GO_ARM_RESET_ENCODER:
+                currentState = Arm.STATE.ARM_RESET_ENCODER;
+                break;
+            case GO_ARM_GET_POS:
+                currentState = Arm.STATE.ARM_GET_POS;
+                break;
+            case GO_MOVE_LINK_UP:
+                currentState = Arm.STATE.MOVE_LINK_UP;
+                break;
+            case GO_MOVE_LINK_DOWN:
+                currentState = Arm.STATE.MOVE_LINK_DOWN;
+                break;
+            case GO_CLAW_DROP_ONE_PIXEL:
+                currentState = Arm.STATE.CLAW_DROP_ONE_PIXEL;
                 break;
         }
     }
 
     public void update(){
         switch (currentState) {
-            case ARM_FORWARD:
-                moveArmForward(0);
+            case ARM_MOVE_UP:
+                moveArmForward(0.2);
                 break;
-            case ARM_BACKWARD:
+            case ARM_MOVE_DOWN:
                 moveArmBackward(-0.2);
                 break;
 //            case ARM_LINK1_PICK:
@@ -122,10 +171,10 @@ public class Arm {
 //            case ARM_LINK1_DROP:
 //                moveLinkDrop();
 //                break;
-            case DROP_POS:
+            case ARM_MOVE_DROP:
                 armSetDropPos();
                 break;
-            case PICK_POS:
+            case ARM_MOVE_PICK:
                 armSetPickPos();
                 break;
             case CLAW_CLOSE:
