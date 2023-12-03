@@ -36,6 +36,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.modules.Arm;
+import org.firstinspires.ftc.teamcode.modules.Lift;
+
 @TeleOp(name="LiftTest", group="Linear OpMode")
 public class LiftTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -46,7 +49,7 @@ public class LiftTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        lift  = hardwareMap.get(DcMotor.class, "lift");
+        Lift winchLift = new Lift(hardwareMap, telemetry);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
 
@@ -62,6 +65,16 @@ public class LiftTest extends LinearOpMode {
 
             // Send calculated power to wheels
             lift.setPower(liftPower);
+
+            if (gamepad1.right_trigger > 0){
+                winchLift.transition(Lift.EVENT.ROBOT_UNDER_TRUSS);
+            }
+            if (gamepad1.left_trigger > 0){
+                winchLift.transition(Lift.EVENT.LIFT_GRABBED_TRUSS);
+            }
+
+
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
