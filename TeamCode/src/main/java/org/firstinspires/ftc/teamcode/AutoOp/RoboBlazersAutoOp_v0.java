@@ -127,23 +127,7 @@ public class RoboBlazersAutoOp_v0 extends LinearOpMode {
 
 
                 if(direction=="center"){
-//                    sleep(2000);
-//                    pixelArm.dropInAuton();
-//                    sleep(1000);
-//                    drive.followTrajectory(centerPos);
-//                    Pose2d poseEstimate = drive.getPoseEstimate();
-//                    sleep(2000);
-//                    drive.followTrajectory(trajectory1);
-//                    pixelArm.clawClose();
-//                    drive.followTrajectory(back);
-//                    sleep(1000);
-//                    drive.followTrajectory(goLittleRight);
-//                    sleep(2000);
-//                    drive.followTrajectory(goLittleForward);
-//                    sleep(2000);
-//                    drive.followTrajectory(goToBackdrop);
                     drive.setPoseEstimate(untitled0.start());
-
                     drive.followTrajectorySequence(untitled0);
                     break;
                 }

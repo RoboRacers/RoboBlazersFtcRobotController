@@ -10,8 +10,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.modules.Arm;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.Arrays;
 
@@ -22,11 +26,32 @@ public class AutonBlueBack extends LinearOpMode {
 
     boolean finished = false;
     public SampleMecanumDrive drive;
+
+    String direction;
+
+    private OpenCvWebcam camera;
+    private TeamPropDetectionPipeline teamPropDetectionPipeline;
+
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        Arm pixelArm = new Arm(hardwareMap, telemetry);
+        pixelArm.resetEncoder();
+        //pixelArm.startPosInAuton(-200);
+
+        pixelArm.clawOpen();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        WebcamName mycam = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        camera = OpenCvCameraFactory.getInstance().createWebcam(mycam, cameraMonitorViewId);
+
+        teamPropDetectionPipeline = new TeamPropDetectionPipeline(camera, telemetry);
 
         TrajectoryVelocityConstraint slowCont = new MinVelocityConstraint(Arrays.asList(
                 new TranslationalVelocityConstraint(0.2),
@@ -62,20 +87,28 @@ public class AutonBlueBack extends LinearOpMode {
                 .build();
 
 
+        while (opModeInInit()) {
 
-        while(!isStopRequested() && !opModeIsActive()) {
+            direction = teamPropDetectionPipeline.getDirection();
+
+
+            while (!isStopRequested()) {
+
+
+                if (direction == "center") {
+                    drive.setPoseEstimate(BlueBackCenter.start());
+                    drive.followTrajectorySequence(BlueBackCenter);
+                    break;
+                }
+                else if (direction == "left") {
+                    drive.setPoseEstimate(BlueBackLeft.start());
+                    drive.followTrajectorySequence(BlueBackLeft);
+                    break;
+                }
+                camera.closeCameraDevice();
+                //return;
+            }
 
         }
-        waitForStart();
-        if (isStopRequested()) return;
-//
-//        drive.setPoseEstimate(BlueBackRight.start());
-//
-//        drive.followTrajectorySequence(BlueBackRight);
-//
-//        drive.setPoseEstimate(BlueBackCenter.start());
-//
-//        drive.followTrajectorySequence(BlueBackCenter);
     }
-
 }
