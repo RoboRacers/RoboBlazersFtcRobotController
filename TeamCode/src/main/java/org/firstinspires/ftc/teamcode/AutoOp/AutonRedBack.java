@@ -56,7 +56,7 @@ public class AutonRedBack extends LinearOpMode {
         TrajectorySequence RedBackCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .forward(37)
                 .back(12)
-                .turn(90)
+                .turn(-90)
                 .back(36)
                 //.turn(180)
                 .build();
