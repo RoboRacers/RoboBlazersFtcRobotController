@@ -122,9 +122,9 @@ public class ArmTest_v0 extends LinearOpMode {
                     //pixelArm.incrementUp();
                 }
 
-                if (gamepad2.y){
-                    pixelArm.linkPickPos();
-                }
+//                if (gamepad2.y){
+//                    pixelArm.linkPickPos();
+//                }
 
                 if (gamepad2.dpad_left){
                     pixelArm.overideSafety();

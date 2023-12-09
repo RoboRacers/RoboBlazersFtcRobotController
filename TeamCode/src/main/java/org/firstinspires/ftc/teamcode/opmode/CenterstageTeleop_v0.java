@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -62,7 +63,12 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
     // Declare OpMode members.
 
     double mult;
+    double mult1;
     private ElapsedTime runtime = new ElapsedTime();
+
+    RevTouchSensor touchSensor;
+
+    static boolean isPressed;
 
     //private DcMotorEx pixelArm = null;
 
@@ -75,6 +81,8 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
+
         Arm pixelArm = new Arm(hardwareMap, telemetry);
         DroneLauncher dronelauncher = new DroneLauncher(hardwareMap, telemetry);
 
@@ -84,6 +92,15 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            isPressed = touchSensor.isPressed();
+
+            if (isPressed){
+                pixelArm.resetEncoder();
+                pixelArm.moveArmForward(0);
+                telemetry.addLine("TOUCH PRESSED");
+                telemetry.update();
+            }
 
             if(gamepad2.dpad_right){
                 pixelArm.resetEncoder();
@@ -97,10 +114,16 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
                 mult = 0.5;
             }
 
+            if (gamepad1.left_bumper){
+                mult1 = 0.5;
+            } else{
+                mult1 = 1;
+            }
+
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            gamepad1.left_stick_x, //imperfect strafing fix, must be tuned for new drivetrain
+                            -gamepad1.left_stick_y * mult1,
+                            gamepad1.left_stick_x * mult1, //imperfect strafing fix, must be tuned for new drivetrain
                             gamepad1.right_stick_x * mult
                     )
             );
@@ -194,9 +217,9 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
                 pixelArm.incrementUp();
             }
 
-            if (gamepad2.y){
-                pixelArm.linkPickPos();
-            }
+//            if (gamepad2.y){
+//                pixelArm.linkPickPos();
+//            }
 
             if (gamepad2.dpad_left){
                 pixelArm.overideSafety();

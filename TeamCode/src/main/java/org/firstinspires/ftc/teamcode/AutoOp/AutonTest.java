@@ -91,16 +91,16 @@ public class AutonTest extends LinearOpMode {
                 .forward(25) //1
                 .turn(Math.toRadians(90))
                 .strafeLeft(6)
-                .forward(6) //2 L
-                .back(8) // 3
+                .forward(19) //2 L
+                .back(18) // 3
                 .turn(Math.toRadians(-90))
                 .strafeRight(2)
                 .forward(31)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .strafeLeft(2)
                 .back(60)
-                .strafeRight(18)
-                .back(22)
+                .strafeLeft(30)
+                .back(28)
                 .build();
 
 

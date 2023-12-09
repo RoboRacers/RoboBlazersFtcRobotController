@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 
 @Config
-@Autonomous(name = "Robotblazers auto path test", group = "23692")
+@Autonomous(name = "Robotblazers blue front", group = "23692")
 public class AutonBlueFront extends LinearOpMode {
 
     boolean finished = false;

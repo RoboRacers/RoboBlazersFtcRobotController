@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import static java.lang.Thread.sleep;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,12 +17,17 @@ public class Arm {
 
     Telemetry myTelemetry;
     DcMotorEx pixelArm;
-    Servo linkMotor;
+    Servo linkLeft;
+    Servo linkRight;
     Servo clawMotor;
 
-    double dropPos = 1969;
+    RevTouchSensor touchSensor;
 
-    double pickPos = 2950;
+    static boolean isPressed;
+
+    double dropPos = -769;
+
+    double pickPos = -2000;
 
     double linkPos = 0.66;
     private ElapsedTime runtime = new ElapsedTime();
@@ -193,15 +199,25 @@ public class Arm {
         pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        linkMotor = hardwareMap.get(Servo.class, "linkMotor");
-        //linkMotor.setPosition(0.66);
+        linkLeft = hardwareMap.get(Servo.class, "linkLeft");
+        linkLeft.setDirection(Servo.Direction.REVERSE);
+        linkRight = hardwareMap.get(Servo.class, "linkRight");
+
         clawMotor = hardwareMap.get(Servo.class, "clawMotor");
         myTelemetry = telemetry;
 
         controller = new PIDController(p,i,d);
         //armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
+
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
     }
+
+    public void setLink(double pos){
+        linkLeft.setPosition(pos);
+        linkRight.setPosition(pos);
+    }
+
 
 
     public void resetEncoder(){
@@ -259,7 +275,7 @@ public class Arm {
 
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pixelArm.setPower(0.4);
-        linkMotor.setPosition(linkPos);
+        setLink(1);
 
 
     }
@@ -268,9 +284,9 @@ public class Arm {
     public void armSetDropPos(){
         pixelArm.setTargetPosition((int) dropPos);
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pixelArm.setPower(0.5);
+        pixelArm.setPower(0);
 
-        linkMotor.setPosition(linkPos);
+        //linkMotor.setPosition(linkPos);
     }
 
     public void armStop(){
@@ -301,7 +317,7 @@ public class Arm {
 
         myTelemetry.addData("Ranged Output", output);
         //myTelemetry.update();
-        linkMotor.setPosition(output);
+        setLink(output);
     }
     public void moveLinkDrop(double position){
 
@@ -310,18 +326,18 @@ public class Arm {
 
         myTelemetry.addData("Ranged Output", output);
         //myTelemetry.update();
-        linkMotor.setPosition(output);
+        setLink(output);
     }
 
-    public void linkPickPos(){
-        linkMotor.setPosition(linkPos);
-    }
+//    public void linkPickPos(){
+//        linkMotor.setPosition(linkPos);
+//    }
 
     public void clawOpen(){
-        clawMotor.setPosition(0.55);
+        clawMotor.setPosition(0.8);
     }
     public void clawClose(){
-        clawMotor.setPosition(0);
+        clawMotor.setPosition(0.5);
     }
 
     public void dropOnePixel(){
@@ -361,7 +377,7 @@ public class Arm {
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pixelArm.setPower(0.2);
 
-        linkMotor.setPosition(0.45);
+        //linkMotor.setPosition(0.45);
     }
 
     public void dropInAuton() throws InterruptedException {
@@ -373,7 +389,7 @@ public class Arm {
 
         sleep(2000);
 
-        linkMotor.setPosition(0.146);
+        //linkMotor.setPosition(0.146);
 
     }
 
@@ -393,7 +409,7 @@ public class Arm {
         myTelemetry.addData("ARM POS", pixelArm.getCurrentPosition());
         myTelemetry.update();
         sleep(2000);
-        linkMotor.setPosition(0.375);
+        //linkMotor.setPosition(0.375);
         clawClose();
     }
 

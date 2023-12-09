@@ -22,7 +22,7 @@ public class DroneLauncher {
 
     public DroneLauncher(HardwareMap hardwareMap, Telemetry telemetry) {
         droneServo = hardwareMap.get(Servo.class, "droneServo");
-        droneServo.setPosition(START_POSITION);
+        //droneServo.setPosition(START_POSITION);
     }
 
     public void launchDrone() {
