@@ -86,9 +86,6 @@ public class CenterstageTeleop_v1 extends LinearOpMode {
         //ArmStates.EVENT = AUTON_START;
 
 
-
-
-
         DroneLauncher dronelauncher = new DroneLauncher(hardwareMap, telemetry);
 
         // Wait for the game to start (driver presses PLAY)
@@ -225,31 +222,23 @@ public class CenterstageTeleop_v1 extends LinearOpMode {
             waitForStart();
             runtime.reset();
 
-            while (opModeIsActive()) {
+            double liftPower;
 
-                double liftPower;
+            double liftdrive = -gamepad1.left_stick_y;
+            liftPower = Range.clip(liftdrive, -1.0, 1.0) ;
 
-                double liftdrive = -gamepad1.left_stick_y;
-                liftPower = Range.clip(liftdrive, -1.0, 1.0) ;
+            // Send calculated power to wheels
+            lift.setPower(liftPower);
 
-                // Send calculated power to wheels
-                lift.setPower(liftPower);
-
-                if (gamepad1.right_trigger > 0){
-                    winchLift.transition(Lift.EVENT.ROBOT_UNDER_TRUSS);
-                }
-                if (gamepad1.left_trigger > 0){
-                    winchLift.transition(Lift.EVENT.LIFT_GRABBED_TRUSS);
-                }
-
-
-
-
-                // Show the elapsed game time and wheel power.
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-                telemetry.addData("Lift", "lift (%.2f)", liftPower);
-                telemetry.update();
+            if (gamepad1.right_trigger > 0){
+                winchLift.transition(Lift.EVENT.ROBOT_UNDER_TRUSS);
             }
+            if (gamepad1.left_trigger > 0){
+                winchLift.transition(Lift.EVENT.LIFT_GRABBED_TRUSS);
+            }
+
+            telemetry.addData("Lift", "lift (%.2f)", liftPower);
+            telemetry.update();
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
