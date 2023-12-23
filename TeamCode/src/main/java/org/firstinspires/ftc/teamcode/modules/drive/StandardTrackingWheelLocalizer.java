@@ -18,12 +18,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double TICKS_PER_REV = 2000;
 
     //https://www.gobilda.com/odometry-pod-43mm-width-48mm-wheel/
-    public static double WHEEL_RADIUS = 0.944882;
+    public static double WHEEL_RADIUS = 0.846457;
     public static double GEAR_RATIO = 1;
-    public static double LATERAL_DISTANCE = 8.3;
-    public static double FORWARD_OFFSET = 5;
-    public static double X_MULTIPLIER = 1;
-    public static double Y_MULTIPLIER = 0.983;
+    public static double LATERAL_DISTANCE = -8.38;
+    public static double FORWARD_OFFSET = 6.75;
+    public static double X_MULTIPLIER = 1.1176;
+    public static double Y_MULTIPLIER = 1.1176;
     private Encoder leftEncoder, rightEncoder, frontEncoder;
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(

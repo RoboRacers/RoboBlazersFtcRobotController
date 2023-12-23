@@ -23,10 +23,10 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     //public static final double TICKS_PER_REV = 383.6;
-    public static final double TICKS_PER_REV = 537;
+    public static final double TICKS_PER_REV = 2000;
 
     //public static final double MAX_RPM = 312;
-
+//Yellow Jacket 5203: 26.9:1 ratio with 24mm 8mm rex shaft
     public static final double MAX_RPM = 223;
 
     /*
@@ -49,9 +49,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2.75591; // in
+    public static double WHEEL_RADIUS = 1.885; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.469; // in
+    public static double TRACK_WIDTH = 16; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -60,7 +60,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 1.00 / rpmToVelocity(MAX_RPM); //d //0.015538227947419448
-    public static double kA = 0.0033; //i
+    public static double kA = 0; //i
     public static double kStatic = 0; //p
 
     /*
@@ -93,17 +93,17 @@ public class DriveConstants {
      */
 //    public static double MAX_VEL = 44; // Default - 65
 
-    public static double MAX_VEL = 44; // Default - 65
-//    public static double MAX_ACCEL = 44; // Default - 45
-    public static double MAX_ACCEL = 44;
-//
+    public static double MAX_VEL = MAX_RPM/60*GEAR_RATIO*WHEEL_RADIUS*Math.toRadians(360)*0.7; // Default - 65
+    //    public static double MAX_ACCEL = 44; // Default - 45
+    public static double MAX_ACCEL = 30;
+    //
 //
     public static double MAX_ANG_VEL = Math.toRadians(194.67);
     //public static double MAX_ANG_VEL = 0.013969102822161086;
 
 //    public static double MAX_ANG_ACCEL = Math.toRadians(230);
 
-    public static double MAX_ANG_ACCEL = Math.toRadians(194.67);
+    public static double MAX_ANG_ACCEL = MAX_VEL/TRACK_WIDTH;
 
 
     public static double encoderTicksToInches(double ticks) {
