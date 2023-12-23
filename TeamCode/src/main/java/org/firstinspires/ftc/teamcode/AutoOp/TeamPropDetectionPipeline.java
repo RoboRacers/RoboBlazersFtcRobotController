@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamPropDetectionPipeline {
-    TeamPropPipeline teamPropDetectionPipeline;
+    public TeamPropPipeline teamPropDetectionPipeline;
     Telemetry telemetry;
 
     public TeamPropDetectionPipeline(OpenCvCamera camera, Telemetry telemetry) {
@@ -26,11 +26,12 @@ public class TeamPropDetectionPipeline {
 
             @Override
             public void onError(int errorCode) {
+                telemetry.addLine("Fail to start");
+                telemetry.update();
             }
         });
 
-        while (teamPropDetectionPipeline == null) {
-        }
+
     }
 
     public String getDirection() {

@@ -34,6 +34,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.modules.Arm;
@@ -41,7 +42,21 @@ import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
 import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
+import org.firstinspires.ftc.teamcode.modules.Lift;
 
+
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.modules.Arm;
+import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequence;
 
 
 /*
@@ -66,6 +81,8 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
     double mult1;
     private ElapsedTime runtime = new ElapsedTime();
 
+    DcMotorEx Lift;
+
     RevTouchSensor touchSensor;
 
     static boolean isPressed;
@@ -86,6 +103,26 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
         Arm pixelArm = new Arm(hardwareMap, telemetry);
         DroneLauncher dronelauncher = new DroneLauncher(hardwareMap, telemetry);
 
+        Lift = hardwareMap.get(DcMotorEx.class, "Lift");
+        //Lift lift = new Lift(hardwareMap, telemetry);
+
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                .strafeRight(1)
+                .build();
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                .strafeLeft(1)
+                .build();
+
+        TrajectorySequence forward = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                .forward(1)
+                .build();
+
+        TrajectorySequence back = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                .back(1)
+                .build();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -97,14 +134,14 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
 
             if (isPressed){
                 pixelArm.resetEncoder();
-                pixelArm.moveArmForward(0);
+                pixelArm.armSetPickPos();
                 telemetry.addLine("TOUCH PRESSED");
                 telemetry.update();
             }
 
-            if(gamepad2.dpad_right){
-                pixelArm.resetEncoder();
-            }
+//            if(gamepad2.dpad_right){
+//                pixelArm.resetEncoder();
+//            }
 
             //drive
 
@@ -129,6 +166,24 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
             );
 
             drive.update();
+
+            if (gamepad1.dpad_up){
+                drive.setPoseEstimate(forward.start());
+
+                drive.followTrajectorySequence(forward);
+            } else if (gamepad1.dpad_down) {
+                drive.setPoseEstimate(back.start());
+
+                drive.followTrajectorySequence(back);
+            } else if (gamepad1.dpad_left) {
+                drive.setPoseEstimate(left.start());
+
+                drive.followTrajectorySequence(left);
+            } else if (gamepad1.dpad_right) {
+                drive.setPoseEstimate(right.start());
+
+                drive.followTrajectorySequence(right);
+            }
 
 
             // arm controls
@@ -170,10 +225,12 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
             if(gamepad2.dpad_up){
                 pixelArm.armSetDropPos();
                 telemetry.addLine("Arm Drop Pos");
-                //telemetry.update();
+                telemetry.update();
             }
             if(gamepad2.dpad_down){
-                pixelArm.armSetPickPos();
+                pixelArm.moveArmBackward(-0.3);
+//                sleep(1000);
+//                pixelArm.armSetPickPos();
                 telemetry.addLine("Arm Pick Pos");
                 //telemetry.update();
             }
@@ -221,8 +278,20 @@ public class CenterstageTeleop_v0 extends LinearOpMode {
 //                pixelArm.linkPickPos();
 //            }
 
+//            if (gamepad2.dpad_left){
+//                pixelArm.overideSafety();
+//            }
+
             if (gamepad2.dpad_left){
-                pixelArm.overideSafety();
+                Lift.setPower(0.5);
+            }
+
+            if (gamepad2.dpad_right){
+                Lift.setPower(0.2);
+            }
+
+            if (gamepad2.x){
+                Lift.setPower(0);
             }
 
             // Show the elapsed game time and wheel power.

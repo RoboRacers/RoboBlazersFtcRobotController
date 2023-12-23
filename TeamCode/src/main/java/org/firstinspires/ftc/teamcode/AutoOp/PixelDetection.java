@@ -32,8 +32,6 @@ public class PixelDetection {
             }
         });
 
-        while (pixelDetectionPipeline == null) {
-        }
     }
 
     public double getCenterX() {

@@ -1,3 +1,4 @@
+package org.firstinspires.ftc.teamcode.opmode;
 /*
 Copyright (c) 2023 FIRST
 
@@ -30,7 +31,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * detect a number of predefined objects and AprilTags in the 36h11 family, can
  * recognize colors, and can be trained to detect custom objects. See this website for
  * documentation: https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336
- * 
+ *
  * This sample illustrates how to detect AprilTags, but can be used to detect other types
  * of objects by changing the algorithm. It assumes that the HuskyLens is configured with
  * a name of "huskylens".
@@ -60,7 +60,6 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name = "Sensor: HuskyLens", group = "Sensor")
-@Disabled
 public class SensorHuskyLens extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
@@ -147,7 +146,6 @@ public class SensorHuskyLens extends LinearOpMode {
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
             }
-
 
 
             telemetry.update();

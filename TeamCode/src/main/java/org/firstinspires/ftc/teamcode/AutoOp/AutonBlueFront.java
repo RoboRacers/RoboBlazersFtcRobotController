@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -34,6 +35,10 @@ public class AutonBlueFront extends LinearOpMode {
 
     String direction;
 
+    RevTouchSensor touchSensor;
+
+    static boolean isPressed;
+
     private OpenCvWebcam camera;
     private TeamPropDetectionPipeline teamPropDetectionPipeline;
 
@@ -52,7 +57,9 @@ public class AutonBlueFront extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        WebcamName mycam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        WebcamName mycam = hardwareMap.get(WebcamName.class, "TPcam");
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touch");
+
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(mycam, cameraMonitorViewId);
 
@@ -73,55 +80,148 @@ public class AutonBlueFront extends LinearOpMode {
 
         //RobotCore robot = new RobotCore(hardwareMap);
         TrajectorySequence AutonBlueCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .forward(37)
-                .back(10)
+                .forward(32)
+                .back(5)
                 .strafeRight(15)
                 .forward(28)
                 .turn(Math.toRadians(90))
-                .strafeLeft(2)
+                .strafeLeft(4)
                 .back(72)
                 .strafeRight(26)
                 .back(30)
-                //.turn(180)
+                // add arm
+//                .strafeRight(20)
+//                .back(10)
                 .build();
 
         TrajectorySequence AutonBlueRight = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .forward(8)
-                .strafeRight(7)
-                .forward(24)
-                .back(12)
-                .strafeRight(8)
-                .forward(35)
-                .turn(90)
-                .back(72)
-                .strafeRight(32)
+                .forward(25) //1
+                .turn(Math.toRadians(90))
+                .strafeLeft(6)
+                .back(3) // 3
+                .strafeLeft(27)
+                .back(55)
+                .strafeRight(23)
                 .back(30)
-                //.turn(180)
+                // add arm
+//                .strafeLeft(20)
+//                .back(10)
                 .build();
 
+        TrajectorySequence AutonBlueLeft = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .forward(25) //1
+                .turn(Math.toRadians(-90))
+                .strafeRight(7)
+                .forward(8) //2 L
+                .back(16) // 3
+                .turn(Math.toRadians(90))
+                .forward(27)
+                .turn(Math.toRadians(90))
+                .strafeLeft(4)
+                .back(72)
+                .strafeRight(29)
+                .back(30)
+                // add arm
+
+                .build();
+
+        TrajectorySequence AutonPark = drive.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
+//                .strafeLeft(25)
+//                .back(13)
+                .forward(1)
+                .build();
+
+        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .forward(6)
+                .build();
 
         while (opModeInInit()) {
 
-            direction = teamPropDetectionPipeline.getDirection();
+        }
 
 
-            while (!isStopRequested()) {
+        while (!isStopRequested()) {
+            pixelArm.setLink(0);
+            sleep(3000);
 
-
-                if (direction == "center") {
-                    drive.setPoseEstimate(AutonBlueCenter.start());
-                    drive.followTrajectorySequence(AutonBlueCenter);
-                    break;
+            for(int i =0; i<5; i++) {
+                if (teamPropDetectionPipeline.teamPropDetectionPipeline != null) {
+                    direction = teamPropDetectionPipeline.getDirection();
+                    telemetry.addData("Direction: ", direction);
+                    telemetry.update();
+                    sleep(500);
                 }
-                else if (direction == "right") {
-                    drive.setPoseEstimate(AutonBlueRight.start());
-                    drive.followTrajectorySequence(AutonBlueRight);
-                    break;
-                }
-                camera.closeCameraDevice();
-                //return;
+            }
+            camera.closeCameraDevice();
+
+            isPressed = touchSensor.isPressed();
+
+            pixelArm.moveArmDown();
+//            pixelArm.setLink(1);
+            pixelArm.autonArmPos();
+            pixelArm.setLink(1);
+
+
+            if (isPressed){
+                pixelArm.resetEncoder();
+                pixelArm.autonArmPos();
+                telemetry.addLine("TOUCH PRESSED");
+                telemetry.update();
             }
 
+
+            //sleep(2000);
+
+            if (direction == "center") {
+                pixelArm.autonArmPos();
+                drive.setPoseEstimate(AutonBlueCenter.start());
+                drive.followTrajectorySequence(AutonBlueCenter);
+                pixelArm.armSetDropPos();
+                sleep(2000);
+                pixelArm.clawClose();
+                sleep(2000);
+                drive.setPoseEstimate(moveForward.start());
+                drive.followTrajectorySequence(moveForward);
+                pixelArm.armSetPickPos();
+                sleep(1000);
+                drive.setPoseEstimate(AutonPark.start());
+                drive.followTrajectorySequence(AutonPark);
+                break;
+            }
+            else if (direction == "right") {
+                pixelArm.autonArmPos();
+
+                drive.setPoseEstimate(AutonBlueRight.start());
+                drive.followTrajectorySequence(AutonBlueRight);
+                pixelArm.armSetDropPos();
+                sleep(2000);
+                pixelArm.clawClose();
+                sleep(2000);
+                drive.setPoseEstimate(moveForward.start());
+                drive.followTrajectorySequence(moveForward);
+                pixelArm.armSetPickPos();
+                sleep(1000);
+                drive.setPoseEstimate(AutonPark.start());
+                drive.followTrajectorySequence(AutonPark);
+                break;
+            } else {
+                pixelArm.autonArmPos();
+
+                drive.setPoseEstimate(AutonBlueLeft.start());
+                drive.followTrajectorySequence(AutonBlueLeft);
+                pixelArm.armSetDropPos();
+                sleep(2000);
+                pixelArm.clawClose();
+                sleep(2000);
+                drive.setPoseEstimate(moveForward.start());
+                drive.followTrajectorySequence(moveForward);
+                pixelArm.armSetPickPos();
+                sleep(1000);
+                drive.setPoseEstimate(AutonPark.start());
+                drive.followTrajectorySequence(AutonPark);
+            }
+
+            //return;
         }
     }
 

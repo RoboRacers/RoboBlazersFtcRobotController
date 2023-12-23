@@ -47,7 +47,7 @@ public class AutonTest extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+        TrajectorySequence redCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
                 //.lineTo(new Vector2d(36, 0))
                 //.lineTo(new Vector2d(-36.00, -20.00))
                 //.lineTo(new Vector2d(-50.00, -37.00))
@@ -55,52 +55,119 @@ public class AutonTest extends LinearOpMode {
                 //.turn(Math.toRadians(-90)) //change after tuning to -90
                 //.lineTo(new Vector2d(10, -7))
 
-                .forward(37)
+                .forward(32)
+                .back(5)
+                .strafeLeft(15)
+                .forward(28)
+                .turn(Math.toRadians(-90))
+                .strafeRight(4)
+                .back(72)
+                .strafeLeft(26)
+                .back(30)
+                // add arm
+                .strafeLeft(20)
                 .back(10)
+                .build();
+
+        TrajectorySequence blueCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                //.lineTo(new Vector2d(36, 0))
+                //.lineTo(new Vector2d(-36.00, -20.00))
+                //.lineTo(new Vector2d(-50.00, -37.00))
+                //.lineTo(new Vector2d(-50, -7.00))
+                //.turn(Math.toRadians(-90)) //change after tuning to -90
+                //.lineTo(new Vector2d(10, -7))
+
+                .forward(32)
+                .back(5)
                 .strafeRight(15)
                 .forward(28)
                 .turn(Math.toRadians(90))
-                .strafeLeft(2)
+                .strafeLeft(4)
                 .back(72)
                 .strafeRight(26)
                 .back(30)
-                //.turn(180)
+                // add arm
+                .strafeRight(20)
+                .back(10)
                 .build();
 
-        TrajectorySequence leftSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        TrajectorySequence redRightSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+
+                .forward(25) //1
+                .turn(Math.toRadians(90))
+                .strafeLeft(7)
+//                .back(10)
+//                .strafeRight(11)
+//                .forward(5)
+//                .strafeLeft(5)
+                .forward(8) //2 L
+                .back(16) // 3
+                .turn(Math.toRadians(-90))
+                .forward(27)
+                .turn(Math.toRadians(-90))
+                .strafeRight(4)
+                .back(72)
+                .strafeLeft(29)
+                .back(30)
+                // add arm
+                .strafeRight(30)
+                .back(10)
+//                .strafeRight(10)
+//                .forward(31)
+//                .turn(Math.toRadians(90))
+//                .strafeLeft(2)
+//                .back(72)
+//                .strafeRight(26)
+//                .back(32)
+                .build();
+
+
+
+        TrajectorySequence blueLeftSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
 
                 .forward(25) //1
                 .turn(Math.toRadians(-90))
-                .strafeRight(6)
-                .forward(14) //2 L
+                .strafeRight(7)
+//                .back(10)
+//                .strafeRight(11)
+//                .forward(5)
+//                .strafeLeft(5)
+                .forward(8) //2 L
                 .back(16) // 3
                 .turn(Math.toRadians(90))
-                .strafeRight(10)
-                .forward(31)
+                .forward(27)
                 .turn(Math.toRadians(90))
-                .strafeLeft(2)
+                .strafeLeft(4)
                 .back(72)
-                .strafeRight(26)
-                .back(32)
+                .strafeRight(29)
+                .back(30)
+                // add arm
+                .strafeLeft(30)
+                .back(10)
+//                .strafeRight(10)
+//                .forward(31)
+//                .turn(Math.toRadians(90))
+//                .strafeLeft(2)
+//                .back(72)
+//                .strafeRight(26)
+//                .back(32)
                 .build();
 
-
-
-        TrajectorySequence rightSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        TrajectorySequence blueRightSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
 
                 .forward(25) //1
                 .turn(Math.toRadians(90))
                 .strafeLeft(6)
-                .forward(19) //2 L
-                .back(18) // 3
-                .turn(Math.toRadians(-90))
-                .strafeRight(2)
-                .forward(31)
-                .turn(Math.toRadians(-90))
-                .strafeLeft(2)
-                .back(60)
-                .strafeLeft(30)
-                .back(28)
+                //.forward(6) // drop point
+                .back(3) // 3
+                //.turn(Math.toRadians(-90))
+                .strafeLeft(27)
+                .back(55)
+                .strafeRight(23)
+                .back(30)
+                // add arm
+                .strafeLeft(20)
+                .back(10)
                 .build();
 
 
@@ -108,7 +175,63 @@ public class AutonTest extends LinearOpMode {
 
 
 
+        TrajectorySequence blueBackCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+                //.lineTo(new Vector2d(36, 0))
+                //.lineTo(new Vector2d(-36.00, -20.00))
+                //.lineTo(new Vector2d(-50.00, -37.00))
+                //.lineTo(new Vector2d(-50, -7.00))
+                //.turn(Math.toRadians(-90)) //change after tuning to -90
+                //.lineTo(new Vector2d(10, -7))
 
+                .forward(32)
+                .back(5)
+                .turn(Math.toRadians(90))
+                .strafeLeft(4)
+                .back(30)
+                .strafeLeft(22)
+                .back(10)
+
+                .build();
+
+        TrajectorySequence blueBackRightSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+
+                .forward(25) //1
+                .turn(Math.toRadians(90))
+                .strafeLeft(6)
+                //.forward(6) // drop point
+                .back(37) // 3
+                //.turn(Math.toRadians(-90))
+                .strafeLeft(24)
+                .back(10)
+
+                .build();
+
+
+        TrajectorySequence blueBackLeftSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+
+                .forward(25) //1
+                .turn(Math.toRadians(-90))
+                .strafeRight(7)
+//                .back(10)
+//                .strafeRight(11)
+//                .forward(5)
+//                .strafeLeft(5)
+                .forward(5)
+                .back(8) // 3
+                .turn(Math.toRadians(180))
+                .strafeRight(2)
+                .back(40)
+                // add arm
+                .strafeLeft(30)
+                .back(10)
+//                .strafeRight(10)
+//                .forward(31)
+//                .turn(Math.toRadians(90))
+//                .strafeLeft(2)
+//                .back(72)
+//                .strafeRight(26)
+//                .back(32)
+                .build();
 
         while(!isStopRequested() && !opModeIsActive()) {
 
@@ -116,9 +239,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(rightSide.start());
+        drive.setPoseEstimate(blueBackLeftSide.start());
 
-        drive.followTrajectorySequence(rightSide);
+        drive.followTrajectorySequence(blueBackLeftSide);
     }
 
 }

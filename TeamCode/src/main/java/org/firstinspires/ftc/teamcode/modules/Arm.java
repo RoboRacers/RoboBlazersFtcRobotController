@@ -25,9 +25,9 @@ public class Arm {
 
     static boolean isPressed;
 
-    double dropPos = -769;
+    double dropPos = 1450;
 
-    double pickPos = -2000;
+    double pickPos = 75;
 
     double linkPos = 0.66;
     private ElapsedTime runtime = new ElapsedTime();
@@ -259,6 +259,13 @@ public class Arm {
         }
     }
 
+    public void moveArmDown(){
+        pixelArm.setTargetPosition((int) -500);
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.4);
+    }
+
     public void armSetPickPos(){
 
 //        if(armcurrentState == STATE.PICK_POS || armcurrentState == STATE.ARM_FORWARD) /*And check if it is within limits **/{
@@ -271,6 +278,13 @@ public class Arm {
 //        }
 //        clawOpen();
 
+//        pixelArm.setTargetPosition(0);
+//        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        pixelArm.setPower(0.4);
+        setLink(1);
+
+        clawClose();
+
         pixelArm.setTargetPosition((int) pickPos);
 
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -280,12 +294,25 @@ public class Arm {
 
     }
 
+    public void autonArmPos(){
+        setLink(1);
+
+        clawOpen();
+
+        pixelArm.setTargetPosition((int) pickPos);
+
+        pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelArm.setPower(0.4);
+        setLink(1);
+    }
 
     public void armSetDropPos(){
         pixelArm.setTargetPosition((int) dropPos);
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pixelArm.setPower(0);
+        pixelArm.setPower(0.4);
 
+
+        setLink(0);
         //linkMotor.setPosition(linkPos);
     }
 
@@ -334,10 +361,10 @@ public class Arm {
 //    }
 
     public void clawOpen(){
-        clawMotor.setPosition(0.8);
+        clawMotor.setPosition(0.9);
     }
     public void clawClose(){
-        clawMotor.setPosition(0.5);
+        clawMotor.setPosition(0.2);
     }
 
     public void dropOnePixel(){
