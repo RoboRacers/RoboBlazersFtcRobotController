@@ -193,9 +193,9 @@ public class Arm {
         pixelArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        linkMotor = hardwareMap.get(Servo.class, "linkMotor");
+        linkMotor = hardwareMap.get(Servo.class, "linkServo");
         //linkMotor.setPosition(0.66);
-        clawMotor = hardwareMap.get(Servo.class, "clawMotor");
+        clawMotor = hardwareMap.get(Servo.class, "clawServo");
         myTelemetry = telemetry;
 
         controller = new PIDController(p,i,d);

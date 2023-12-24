@@ -47,7 +47,7 @@ public class AutonTest extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
+        TrajectorySequence untitled01 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
                 //.lineTo(new Vector2d(36, 0))
                 //.lineTo(new Vector2d(-36.00, -20.00))
                 //.lineTo(new Vector2d(-50.00, -37.00))
@@ -86,23 +86,15 @@ public class AutonTest extends LinearOpMode {
 
 
 
-        TrajectorySequence rightSide = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-
-                .forward(25) //1
-                .turn(Math.toRadians(90))
-                .strafeLeft(6)
-                .forward(6) //2 L
-                .back(8) // 3
-                .turn(Math.toRadians(-90))
-                .strafeRight(2)
-                .forward(31)
-                .turn(Math.toRadians(90))
-                .strafeLeft(2)
-                .back(60)
-                .strafeRight(18)
-                .back(22)
+        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(-36.04, 62.10, Math.toRadians(270.00)))
+                .splineTo(new Vector2d(-35.87, 29), Math.toRadians(-89.71))
+                .lineTo(new Vector2d(-36.04, 45.42))
+                .splineTo(new Vector2d(-48, 40.73), Math.toRadians(267.61))
+                .splineTo(new Vector2d(-50, 27.45), Math.toRadians(269.38))
+                .splineTo(new Vector2d(-0.26, 12.55), Math.toRadians(-3.18))
+                .splineTo(new Vector2d(31.87, 11.20), Math.toRadians(0.61))
+                .splineTo(new Vector2d(49.94, 34.13), Math.toRadians(0.66))
                 .build();
-
 
 
 
@@ -116,9 +108,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(rightSide.start());
+        drive.setPoseEstimate(untitled0.start());
 
-        drive.followTrajectorySequence(rightSide);
+        drive.followTrajectorySequence(untitled0);
     }
 
 }
