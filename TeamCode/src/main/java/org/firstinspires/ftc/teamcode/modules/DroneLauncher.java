@@ -12,6 +12,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class DroneLauncher {
     Servo tempServo;
     Servo droneServo;
+    public enum STATE {
+        Drone_Launched,
+    }
+
+    public enum EVENT{
+        Drone_Button_Pressed
+    }
 
     ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double LAUNCH_POSITION = 1.0;

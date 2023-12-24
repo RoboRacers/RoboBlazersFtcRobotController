@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.modules.DroneLauncher;
 
+@TeleOp
 public class DroneTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
