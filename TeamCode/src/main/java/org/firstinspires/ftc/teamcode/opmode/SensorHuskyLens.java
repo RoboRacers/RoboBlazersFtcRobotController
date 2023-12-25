@@ -113,7 +113,7 @@ public class SensorHuskyLens extends LinearOpMode {
          * within the OpMode by calling selectAlgorithm() and passing it one of the values
          * found in the enumeration HuskyLens.Algorithm.
          */
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+        //huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
 
@@ -145,6 +145,10 @@ public class SensorHuskyLens extends LinearOpMode {
             telemetry.addData("Block count", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
+                telemetry.addData("x: ", blocks[i].x);
+                telemetry.addData("y: ", blocks[i].y);
+                telemetry.addData("height: ", blocks[i].height);
+                telemetry.addData("width: ", blocks[i].width);
             }
 
 

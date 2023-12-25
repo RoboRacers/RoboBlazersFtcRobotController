@@ -18,12 +18,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double TICKS_PER_REV = 2000;
 
     //https://www.gobilda.com/odometry-pod-43mm-width-48mm-wheel/
-    public static double WHEEL_RADIUS = 0.944882;
+    public static double WHEEL_RADIUS = 0.846457;
     public static double GEAR_RATIO = 1;
-    public static double LATERAL_DISTANCE = 8.3;
-    public static double FORWARD_OFFSET = 5;
-    public static double X_MULTIPLIER = 1;
-    public static double Y_MULTIPLIER = 0.983;
+    public static double LATERAL_DISTANCE = -8.38;
+    public static double FORWARD_OFFSET = -11;
+    public static double X_MULTIPLIER = 1.1176;
+    public static double Y_MULTIPLIER = 1.1176;
     private Encoder leftEncoder, rightEncoder, frontEncoder;
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -32,15 +32,17 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Bl")); // Port Number 0
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Fr")); // Port Number 1
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Fl")); // Port Number 2
+
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear")); // Port Number 0
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront")); // Port Number 1
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront")); // Port Number 2
+
+        //leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Bl")); // Port Number 0
+        //frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Fr")); // Port Number 1
+        //rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "Fl")); // Port Number 2
 
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        //TBD to check
-//        frontEncoder.setDirection(Encoder.Direction.REVERSE);
-
+        //frontEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
