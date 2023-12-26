@@ -95,6 +95,27 @@ public class AutonTest extends LinearOpMode {
                 .splineTo(new Vector2d(31.87, 11.20), Math.toRadians(0.61))
                 .splineTo(new Vector2d(49.94, 34.13), Math.toRadians(0.66))
                 .build();
+        TrajectorySequence untitled1 = drive.trajectorySequenceBuilder(new Pose2d(-36.56, 63.70, Math.toRadians(-89.30)))
+                .splineTo(new Vector2d(-28.84, 32.55), Math.toRadians(-4.64))
+                .splineTo(new Vector2d(-46.79, 29.73), Math.toRadians(230.87))
+                .splineTo(new Vector2d(-41.01, 12.53), Math.toRadians(1.12))
+                .splineTo(new Vector2d(32.55, 13.87), Math.toRadians(90.00))
+                .splineTo(new Vector2d(44.12, 36.26), Math.toRadians(178.60))
+                .build();
+        TrajectorySequence untitled2 = drive.trajectorySequenceBuilder(new Pose2d(-35.52, 66.96, Math.toRadians(-86.73)))
+                .splineTo(new Vector2d(-42.93, 31.51), Math.toRadians(183.95))
+                .lineToSplineHeading(new Pose2d(-33.29, 6.30, Math.toRadians(0.00)))
+                .splineTo(new Vector2d(32.85, 2.60), Math.toRadians(69.15))
+                .splineTo(new Vector2d(43.23, 33.89), Math.toRadians(187.31))
+                .build();
+
+
+
+
+
+
+
+
 
 
 
@@ -108,9 +129,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(untitled0.start());
+        drive.setPoseEstimate(untitled2.start());
 
-        drive.followTrajectorySequence(untitled0);
+        drive.followTrajectorySequence(untitled2);
     }
 
 }
