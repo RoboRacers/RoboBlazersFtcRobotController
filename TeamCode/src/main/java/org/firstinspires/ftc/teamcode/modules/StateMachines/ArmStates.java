@@ -10,30 +10,17 @@ public class ArmStates extends StateMachine {
 
         //Arm States
 
-        ARM_HOLD_POS,
-        ARM_START,
-        ARM_MOVE_FOR_DRIVING,
-        ARM_MOVE_UP,
-        ARM_MOVE_DOWN,
+        ARM_FOLDED_POS,
+        ARM_DROPPING_BACKDROP,
+        ARM_MOVING_UP,
+        ARM_MOVING_DOWN,
         ARM_INCREMENT_UP,
         ARM_INCREMENT_DOWN,
-        ARM_MOVE_PICK,
-        ARM_MOVE_DROP,
-        ARM_MOVE_DROP_AUTON,
-        ARM_SAFETY_MOVE,
-        ARM_RESET_ENCODER, //might be removed or changed to POT
-        ARM_GET_POS,
-
-        //Link States
-
-        MOVE_LINK_UP,
-        MOVE_LINK_DOWN,
-
-        //Claw States
-
+        CLAW_CLOSING,
+        CLAW_DROP_BOTTOM_PIXEL,
+        CLAW_DROP_TOP_PIXEL,
+        CLAW_CLOSED,
         CLAW_OPEN,
-        CLAW_CLOSE,
-        CLAW_DROP_ONE_PIXEL
     }
 
     public enum EVENT{
