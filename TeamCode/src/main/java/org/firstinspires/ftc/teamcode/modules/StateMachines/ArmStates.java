@@ -49,29 +49,35 @@ public class ArmStates extends StateMachine {
 
     public void transition(ArmStates.EVENT event) {
         switch (event) {
-            case AUTON_START:
-                currentState = STATE.ARM_START;
+            case NEED_ARM_TO_FOLD:
+                currentState = STATE.ARM_FOLDED_POS;
                 break;
-            case DETECTING_TP:
-                currentState = STATE.ARM_HOLD_POS;
+            case NEED_DROP:
+                currentState = STATE.ARM_DROPPING_BACKDROP;
                 break;
-            case DRIVING_WITH_PIXEL:
-                currentState = STATE.ARM_MOVE_FOR_DRIVING;
+            case NEED_ARM_UP:
+                currentState = STATE.ARM_MOVING_UP;
                 break;
-            case DROPPING_AT_TP:
-                currentState = STATE.ARM_MOVE_DROP_AUTON;
+            case NEED_ARM_DOWN:
+                currentState = STATE.ARM_MOVING_DOWN;
                 break;
-            case DROPPING_AT_BACKDROP:
-                currentState = STATE.ARM_MOVE_DROP;
+            case NEED_ARM_INCREMENT_UP:
+                currentState = STATE.ARM_INCREMENT_UP;
                 break;
-            case DRIVING_WITHOUT_PIXEL:
-                currentState = STATE.ARM_MOVE_FOR_DRIVING;
+            case NEED_ARM_INCREMENT_DOWN:
+                currentState = STATE.ARM_INCREMENT_DOWN;
                 break;
-            case ALLIGN_WITH_PIXEL:
-                currentState = STATE.ARM_MOVE_PICK;
+            case NEED_CLAW_TO_CLOSE:
+                currentState = STATE.CLAW_CLOSING;
                 break;
-            case PICK_UP_PIXEL:
-                currentState = STATE.CLAW_CLOSE;
+            case NEED_CLAW_TO_DROP_BOTTOM_PIXEL:
+                currentState = STATE.CLAW_DROP_BOTTOM_PIXEL;
+            case NEED_CLAW_TO_DROP_TOP_PIXEL:
+                currentState = STATE.CLAW_DROP_TOP_PIXEL;
+            case THE_CLAW_IS_CLOSED:
+                currentState = STATE.CLAW_CLOSED;
+            case THE_CLAW_IS_OPEN:
+                currentState = STATE.CLAW_OPEN;
         }
     }
     public void update() {
