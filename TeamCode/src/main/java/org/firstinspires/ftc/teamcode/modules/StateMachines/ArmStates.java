@@ -24,14 +24,18 @@ public class ArmStates extends StateMachine {
     }
 
     public enum EVENT{
-        AUTON_START,
-        DETECTING_TP,
-        DRIVING_WITH_PIXEL,
-        DROPPING_AT_TP,
-        DROPPING_AT_BACKDROP,
-        DRIVING_WITHOUT_PIXEL,
-        ALLIGN_WITH_PIXEL,
-        PICK_UP_PIXEL,
+        NEED_ARM_TO_FOLD,
+        NEED_DROP,
+        NEED_ARM_UP,
+        NEED_ARM_DOWN,
+        NEED_ARM_INCREMENT_UP,
+        NEED_ARM_INCREMENT_DOWN,
+        NEED_CLAW_TO_CLOSE,
+        NEED_CLAW_TO_DROP_BOTTOM_PIXEL,
+        NEED_CLAW_TO_DROP_TOP_PIXEL,
+        THE_CLAW_IS_CLOSED,
+        THE_CLAW_IS_OPEN,
+
 
     }
 
