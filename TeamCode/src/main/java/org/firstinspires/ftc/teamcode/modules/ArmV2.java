@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ArmTest {
+public class ArmV2 {
 
     public enum EVENT {
         ARM_PICK_UP_POSITION,
@@ -22,7 +22,7 @@ public class ArmTest {
 
     Servo clawMotor;
     // Base class
-    class Link1 {
+    private class Link1 {
         Telemetry l1Telemetry;
         HardwareMap l1hwMap;
         Servo l1LeftServo;
@@ -47,7 +47,7 @@ public class ArmTest {
         }
     }
 
-    class Link2 {
+    private class Link2 {
         Telemetry l2Telemetry;
         HardwareMap l2hwMap;
         DcMotorEx link2ArmMotor;
@@ -72,7 +72,7 @@ public class ArmTest {
         }
     }
 
-    class Claw {
+    private class Claw {
         private String robotName;
         Telemetry cTelemetry;
         HardwareMap chwMap;
