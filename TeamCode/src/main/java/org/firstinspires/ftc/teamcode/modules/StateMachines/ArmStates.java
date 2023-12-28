@@ -16,9 +16,10 @@ public class ArmStates extends StateMachine {
         ARM_MOVING_DOWN,
         ARM_INCREMENT_UP,
         ARM_INCREMENT_DOWN,
-        CLAW_CLOSING,
-        CLAW_DROP_BOTTOM_PIXEL,
-        CLAW_DROP_TOP_PIXEL,
+        LINK_MOVE_BACK,
+        LINK_MOVE_FORWARD,
+        CLAW_DROPPED_BOTTOM_PIXEL,
+        CLAW_DROPPED_TOP_PIXEL,
         CLAW_CLOSED,
         CLAW_OPEN,
     }
@@ -30,13 +31,12 @@ public class ArmStates extends StateMachine {
         NEED_ARM_DOWN,
         NEED_ARM_INCREMENT_UP,
         NEED_ARM_INCREMENT_DOWN,
-        NEED_CLAW_TO_CLOSE,
-        NEED_CLAW_TO_DROP_BOTTOM_PIXEL,
-        NEED_CLAW_TO_DROP_TOP_PIXEL,
+        CLAW_LINK_DROPPING,
+        CLAW_LINK_PICKUP,
+        DROPPING_BOTTOM_PIXEL,
+        DROPPING_TOP_PIXEL,
         THE_CLAW_IS_CLOSED,
         THE_CLAW_IS_OPEN,
-
-
     }
 
     public ArmStates(Arm myArm){
@@ -67,13 +67,14 @@ public class ArmStates extends StateMachine {
             case NEED_ARM_INCREMENT_DOWN:
                 currentState = STATE.ARM_INCREMENT_DOWN;
                 break;
-            case NEED_CLAW_TO_CLOSE:
-                currentState = STATE.CLAW_CLOSING;
-                break;
-            case NEED_CLAW_TO_DROP_BOTTOM_PIXEL:
-                currentState = STATE.CLAW_DROP_BOTTOM_PIXEL;
-            case NEED_CLAW_TO_DROP_TOP_PIXEL:
-                currentState = STATE.CLAW_DROP_TOP_PIXEL;
+            case CLAW_LINK_DROPPING:
+                currentState = STATE.LINK_MOVE_BACK;
+            case CLAW_LINK_PICKUP:
+                currentState = STATE.LINK_MOVE_FORWARD;
+            case DROPPING_BOTTOM_PIXEL:
+                currentState = STATE.CLAW_DROPPED_BOTTOM_PIXEL;
+            case DROPPING_TOP_PIXEL:
+                currentState = STATE.CLAW_DROPPED_TOP_PIXEL;
             case THE_CLAW_IS_CLOSED:
                 currentState = STATE.CLAW_CLOSED;
             case THE_CLAW_IS_OPEN:
@@ -82,8 +83,31 @@ public class ArmStates extends StateMachine {
     }
     public void update() {
         switch (currentState){
-            case ARM_START:
-                //myArm.startPosInAuton(-200);
+            case ARM_FOLDED_POS:
+                myArm.armSetPickPos();
+            case ARM_DROPPING_BACKDROP:
+                myArm.armSetDropPos();
+            case ARM_MOVING_UP:
+                myArm.moveArmForward(0.4);
+            case ARM_MOVING_DOWN:
+                myArm.moveArmBackward(-0.4);
+            case ARM_INCREMENT_UP:
+                myArm.incrementUp();
+            case ARM_INCREMENT_DOWN:
+                myArm.incrementDown();
+            case LINK_MOVE_BACK:
+                //myArm.moveLinkDrop(gamepad2.right_stick_y);
+            case LINK_MOVE_FORWARD:
+                //myArm.moveLinkPickUp(gamepad2.right_stick_y);
+            case CLAW_DROPPED_BOTTOM_PIXEL:
+                myArm.clawDropBottom();
+            case CLAW_DROPPED_TOP_PIXEL:
+                myArm.clawDropTop();
+            case CLAW_CLOSED:
+                myArm.clawClose();
+            case CLAW_OPEN:
+                myArm.clawOpen();
+
         }
     }
 }

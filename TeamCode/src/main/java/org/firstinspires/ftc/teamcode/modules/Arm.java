@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 
 public class Arm {
 
@@ -48,149 +49,8 @@ public class Arm {
 
     private DcMotorEx armMotor;
 
-
-
 //    public void setDirection(DcMotorSimple.Direction reverse) {
 //    }
-
-
-    public enum STATE {
-        //Arm States
-
-        ARM_HOLD_POS,
-        ARM_START,
-        ARM_MOVE_FOR_DRIVING,
-        ARM_MOVE_UP,
-        ARM_MOVE_DOWN,
-        ARM_INCREMENT_UP,
-        ARM_INCREMENT_DOWN,
-        ARM_MOVE_PICK,
-        ARM_MOVE_DROP,
-        ARM_MOVE_DROP_AUTON,
-        ARM_SAFETY_MOVE,
-        ARM_RESET_ENCODER, //might be removed or changed to POT
-        ARM_GET_POS,
-
-        //Link States
-
-        MOVE_LINK_UP,
-        MOVE_LINK_DOWN,
-
-        //Claw States
-
-        CLAW_OPEN,
-        CLAW_CLOSE,
-        CLAW_DROP_ONE_PIXEL
-    }
-
-    public enum EVENT {
-        AUTON_START,
-        DETECTING_TP,
-        DRIVING_WITH_PIXEL,
-        DROPPING_AT_TP,
-        DROPPING_AT_BACKDROP,
-        DRIVING_WITHOUT_PIXEL,
-        ALLIGN_WITH_PIXEL,
-        PICK_UP_PIXEL,
-        GO_ARM_TO_DROP,
-        GO_ARM_MOVE_DROP_AUTON,
-        GO_ARM_SAFTEY_MOVE,
-        GO_ARM_RESET_ENCODER,
-        GO_ARM_GET_POS,
-        GO_MOVE_LINK_UP,
-        GO_MOVE_LINK_DOWN,
-        GO_CLAW_DROP_ONE_PIXEL, TWO_LJ_DOWN, TWO_A, TWO_LJ_UP, TWO_RJ_UP, TWO_RJ_DOWN, TWO_DPAD_UP, TWO_DPAD_DOWN, TWO_RB, TWO_LB,
-
-    }
-
-    STATE currentState;
-    STATE armcurrentState;
-
-    public Arm.STATE getState() {
-        return currentState;
-    }
-
-    public void transition(EVENT event) {
-        switch (event) {
-            case AUTON_START:
-                currentState = Arm.STATE.ARM_HOLD_POS;
-                break;
-            case DETECTING_TP:
-                currentState = Arm.STATE.ARM_START;
-                break;
-            case DRIVING_WITH_PIXEL:
-                currentState = Arm.STATE.ARM_MOVE_FOR_DRIVING;
-                break;
-            case DROPPING_AT_TP:
-                currentState = Arm.STATE.ARM_MOVE_UP;
-                break;
-            case DROPPING_AT_BACKDROP:
-                currentState = Arm.STATE.ARM_MOVE_DOWN;
-                break;
-            case DRIVING_WITHOUT_PIXEL:
-                currentState = Arm.STATE.ARM_INCREMENT_UP;
-                break;
-            case ALLIGN_WITH_PIXEL:
-                currentState = Arm.STATE.ARM_INCREMENT_DOWN;
-                break;
-            case PICK_UP_PIXEL:
-                currentState = Arm.STATE.ARM_MOVE_PICK;
-                break;
-            case GO_ARM_TO_DROP:
-                currentState = Arm.STATE.ARM_MOVE_DROP;
-                break;
-            case GO_ARM_MOVE_DROP_AUTON:
-                currentState = Arm.STATE.ARM_MOVE_DROP_AUTON;
-                break;
-            case GO_ARM_SAFTEY_MOVE:
-                currentState = Arm.STATE.ARM_SAFETY_MOVE;
-                break;
-            case GO_ARM_RESET_ENCODER:
-                currentState = Arm.STATE.ARM_RESET_ENCODER;
-                break;
-            case GO_ARM_GET_POS:
-                currentState = Arm.STATE.ARM_GET_POS;
-                break;
-            case GO_MOVE_LINK_UP:
-                currentState = Arm.STATE.MOVE_LINK_UP;
-                break;
-            case GO_MOVE_LINK_DOWN:
-                currentState = Arm.STATE.MOVE_LINK_DOWN;
-                break;
-            case GO_CLAW_DROP_ONE_PIXEL:
-                currentState = Arm.STATE.CLAW_DROP_ONE_PIXEL;
-                break;
-        }
-    }
-
-    public void update(){
-        switch (currentState) {
-            case ARM_MOVE_UP:
-                moveArmForward(0.2);
-                break;
-            case ARM_MOVE_DOWN:
-                moveArmBackward(-0.2);
-                break;
-//            case ARM_LINK1_PICK:
-//                moveLinkPickUp();
-//                break;
-//            case ARM_LINK1_DROP:
-//                moveLinkDrop();
-//                break;
-            case ARM_MOVE_DROP:
-                armSetDropPos();
-                break;
-            case ARM_MOVE_PICK:
-                armSetPickPos();
-                break;
-            case CLAW_CLOSE:
-                clawClose();
-                break;
-            case CLAW_OPEN:
-                clawOpen();
-                break;
-        }
-    }
 
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         pixelArm = hardwareMap.get(DcMotorEx.class, "armMotor");
@@ -363,6 +223,8 @@ public class Arm {
     public void clawOpen(){
         clawMotor.setPosition(0.9);
     }
+    public void clawDropBottom(){clawMotor.setPosition(0.3);}
+    public void clawDropTop(){clawMotor.setPosition(0.7);}
     public void clawClose(){
         clawMotor.setPosition(0.2);
     }
