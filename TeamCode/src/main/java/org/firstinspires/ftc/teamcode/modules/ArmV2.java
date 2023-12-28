@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmV2 {
-
     public enum EVENT {
         ARM_PICK_UP_POSITION,
         PIXEL_PICK_UP,
@@ -20,92 +19,16 @@ public class ArmV2 {
     }
     EVENT currentEvent;
 
-    Servo clawMotor;
-    // Base class
-    private class Link1 {
-        Telemetry l1Telemetry;
-        HardwareMap l1hwMap;
-        Servo l1LeftServo;
-        Servo l1RightServo;
+        public Link1 link1;
+        public Link2 link2;
+        public Claw claw;
 
-        public Link1(HardwareMap hardwareMap, Telemetry telemetry) {
-            l1Telemetry = telemetry;
-            l1hwMap = hardwareMap;
-            l1LeftServo = l1hwMap.get(Servo.class, "linkLeft");
-            l1LeftServo.setDirection(Servo.Direction.REVERSE);
-            l1RightServo = l1hwMap.get(Servo.class, "linkRight");
-        }
-
-        public void moveUp() {
-            l1LeftServo.setPosition(0);
-            l1RightServo.setPosition(0);
-        }
-
-        public void moveDown() {
-            l1LeftServo.setPosition(1);
-            l1RightServo.setPosition(1);
-        }
-    }
-
-    private class Link2 {
-        Telemetry l2Telemetry;
-        HardwareMap l2hwMap;
-        DcMotorEx link2ArmMotor;
-
-        public Link2(HardwareMap hardwareMap, Telemetry telemetry) {
-            l2Telemetry = telemetry;
-            l2hwMap = hardwareMap;
-            link2ArmMotor = l2hwMap.get(DcMotorEx.class, "link2ArmMotor");
-        }
-
-        // Changing from run to position to analog POT input
-        public void moveUp() {
-            link2ArmMotor.setPower(0.6);
-        }
-
-        public void moveDown1() {
-            link2ArmMotor.setPower(-0.4);
-        }
-
-        public void moveDown2() {
-            link2ArmMotor.setPower(-0.2);
-        }
-    }
-
-    private class Claw {
-        private String robotName;
-        Telemetry cTelemetry;
-        HardwareMap chwMap;
-        Servo clawServo;
-
-        public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
-            cTelemetry = telemetry;
-            chwMap = hardwareMap;
-            clawServo = chwMap.get(Servo.class, "clawMotor");
-        }
-
-        public void open1() {
-            clawServo.setPosition(0.7);
-        }
-        public void open2() {
-            clawServo.setPosition(0.9);
-        }
-
-        public void close() {
-            clawServo.setPosition(0.2);
-        }
-    }
-
-    public class Arm {
-        Link1 link1;
-        Link2 link2;
-        Claw claw;
-
-        public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
+        public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
             // Create an instance of the base class
-            Link1 link1 = new Link1(hardwareMap, telemetry);
-            Link2 link2 = new Link2(hardwareMap, telemetry);
-            Claw claw = new Claw(hardwareMap, telemetry);
+            Link1 link1 = new Link1(hardwareMap.get(Servo.class, "linkLeft"),
+                                    hardwareMap.get(Servo.class, "linkRight"));
+            Link2 link2 = new Link2(hardwareMap.get(DcMotorEx.class, "armMotor"));
+            Claw claw = new Claw(hardwareMap.get(Servo.class, "clawMotor"));
         }
 
         public void transition(EVENT event) {
@@ -143,5 +66,55 @@ public class ArmV2 {
                     claw.open2();
             }
         }
+
+private class Link1 {
+    public Servo l1LeftServo;
+    public Servo l1RightServo;
+
+    public Link1(Servo leftServo, Servo rightServo) {
+        l1LeftServo = leftServo;
+        l1RightServo = rightServo;
+        l1LeftServo.setDirection(Servo.Direction.REVERSE);
     }
+
+    public void moveUp() {
+        l1LeftServo.setPosition(0);
+        l1RightServo.setPosition(0);
+    }
+
+    public void moveDown() {
+        l1LeftServo.setPosition(1);
+        l1RightServo.setPosition(1);
+    }
+}
+
+private class Link2 {
+    DcMotorEx link2ArmMotor;
+
+    public Link2(DcMotorEx armMotor) {  link2ArmMotor = armMotor; }
+    // Changing from run to position to analog POT input
+    public void moveUp() {
+        link2ArmMotor.setPower(0.6);
+    }
+    public void moveDown1() {
+        link2ArmMotor.setPower(-0.4);
+    }
+    public void moveDown2() {
+        link2ArmMotor.setPower(-0.2);
+    }
+}
+
+private class Claw {
+    Servo clawServo;
+    public Claw(Servo cservo) { clawServo = cservo;     }
+    public void open1() {
+        clawServo.setPosition(0.7);
+    }
+    public void open2() {
+        clawServo.setPosition(0.9);
+    }
+    public void close() {
+        clawServo.setPosition(0.2);
+    }
+  }
 }

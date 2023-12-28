@@ -16,6 +16,21 @@ import org.firstinspires.ftc.teamcode.modules.StateMachines.ArmStates;
 
 public class Arm {
 
+    public enum EVENT{
+        NEED_ARM_TO_FOLD,
+        NEED_DROP,
+        NEED_ARM_UP,
+        NEED_ARM_DOWN,
+        NEED_ARM_INCREMENT_UP,
+        NEED_ARM_INCREMENT_DOWN,
+        CLAW_LINK_DROPPING,
+        CLAW_LINK_PICKUP,
+        DROPPING_BOTTOM_PIXEL,
+        DROPPING_TOP_PIXEL,
+        THE_CLAW_IS_CLOSED,
+        THE_CLAW_IS_OPEN,
+    }
+
     Telemetry myTelemetry;
     DcMotorEx pixelArm;
     Servo linkLeft;
