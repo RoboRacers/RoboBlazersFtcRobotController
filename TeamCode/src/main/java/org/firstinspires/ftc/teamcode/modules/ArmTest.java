@@ -63,17 +63,14 @@ public class ArmTest {
         // Changing from run to position to analog POT input
         public void moveUp() {
             link2ArmMotor.setPower(0.6);
-            System.out.println(robotName + " is starting.");
         }
 
         public void moveDown1() {
             link2ArmMotor.setPower(-0.4);
-            System.out.println(robotName + " is moving forward.");
         }
 
         public void moveDown2() {
             link2ArmMotor.setPower(-0.2);
-            System.out.println(robotName + " has stopped.");
         }
     }
 
@@ -81,23 +78,23 @@ public class ArmTest {
         private String robotName;
         Telemetry cTelemetry;
         HardwareMap chwMap;
-        Servo clawMotor;
+        Servo clawServo;
 
         public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
             cTelemetry = telemetry;
             chwMap = hardwareMap;
-            clawMotor = chwMap.get(Servo.class, "clawMotor");
+            clawServo = chwMap.get(Servo.class, "clawMotor");
         }
 
         public void open1() {
-            clawMotor.setPosition(0.7);
+            clawServo.setPosition(0.7);
         }
         public void open2() {
-            clawMotor.setPosition(0.9);
+            clawServo.setPosition(0.9);
         }
 
         public void close() {
-            clawMotor.setPosition(0.2);
+            clawServo.setPosition(0.2);
         }
     }
 
