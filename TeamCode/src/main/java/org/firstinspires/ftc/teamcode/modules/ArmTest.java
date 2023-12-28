@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmTest {
     public enum EVENT {
@@ -15,38 +18,49 @@ public class ArmTest {
         YELLOW_PIXEL_DROP,
     }
     EVENT currentEvent;
-    Servo link1l;
-    Servo link1r;
-    DcMotorEx link2ArmMotor;
+
     Servo clawMotor;
-        // Base class
+    // Base class
     class Link1 {
+        Telemetry l1Telemetry;
+        HardwareMap l1hwMap;
+        Servo l1LeftServo;
+        Servo l1RightServo;
+
         private String robotName;
 
-        public Link1(String name) {
-            this.robotName = name;
+        public Link1(HardwareMap hardwareMap, Telemetry telemetry) {
+            l1Telemetry = telemetry;
+            l1hwMap = hardwareMap;
+            l1LeftServo = l1hwMap.get(Servo.class, "linkLeft");
+            l1LeftServo.setDirection(Servo.Direction.REVERSE);
+            l1RightServo = l1hwMap.get(Servo.class, "linkRight");
         }
 
         public void moveUp() {
-            System.out.println(robotName + " is starting.");
+            l1LeftServo.setPosition(0);
+            l1RightServo.setPosition(0);
         }
 
         public void moveDown() {
-            System.out.println(robotName + " is moving forward.");
-        }
-
-        public void stop() {
-            System.out.println(robotName + " has stopped.");
+            l1LeftServo.setPosition(1);
+            l1RightServo.setPosition(1);
         }
     }
 
     class Link2 {
         private String robotName;
+        Telemetry l2Telemetry;
+        HardwareMap l2hwMap;
+        DcMotorEx link2ArmMotor;
 
-        public Link2(String name) {
-            this.robotName = name;
+        public Link2(HardwareMap hardwareMap, Telemetry telemetry) {
+            l2Telemetry = telemetry;
+            l2hwMap = hardwareMap;
+            link2ArmMotor = l2hwMap.get(DcMotorEx.class, "link2ArmMotor");
         }
-// Changing from run to position to analog POT input
+
+        // Changing from run to position to analog POT input
         public void moveUp() {
             link2ArmMotor.setPower(0.6);
             System.out.println(robotName + " is starting.");
@@ -65,6 +79,9 @@ public class ArmTest {
 
     class Claw {
         private String robotName;
+        Telemetry l2Telemetry;
+        HardwareMap l2hwMap;
+        Servo clawMotor;
 
         public Claw(String name) {
             this.robotName = name;
@@ -86,11 +103,11 @@ public class ArmTest {
     }
 
     public class Arm {
-        public Arm() {
+        public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
             // Create an instance of the base class
-            Link1 link1 = new Link1("RegularRobot");
-            Link2 link2 = new Link2("RegularRobot");
-            Claw claw = new Claw("RegularRobot");
+            Link1 link1 = new Link1(hardwareMap,telemetry);
+            Link2 link2 = new Link2(hardwareMap, telemetry);
+            Claw claw = new Claw(hardwareMap, telemetry);
 
             if (currentEvent == EVENT.PIXEL_PICK_UP) {
                 link1.moveDown();
