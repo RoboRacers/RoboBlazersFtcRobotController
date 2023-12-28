@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmTest {
+
     public enum EVENT {
         ARM_PICK_UP_POSITION,
         PIXEL_PICK_UP,
@@ -26,8 +27,6 @@ public class ArmTest {
         HardwareMap l1hwMap;
         Servo l1LeftServo;
         Servo l1RightServo;
-
-        private String robotName;
 
         public Link1(HardwareMap hardwareMap, Telemetry telemetry) {
             l1Telemetry = telemetry;
@@ -49,7 +48,6 @@ public class ArmTest {
     }
 
     class Link2 {
-        private String robotName;
         Telemetry l2Telemetry;
         HardwareMap l2hwMap;
         DcMotorEx link2ArmMotor;
@@ -99,55 +97,51 @@ public class ArmTest {
     }
 
     public class Arm {
+        Link1 link1;
+        Link2 link2;
+        Claw claw;
+
         public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
             // Create an instance of the base class
-            Link1 link1 = new Link1(hardwareMap,telemetry);
+            Link1 link1 = new Link1(hardwareMap, telemetry);
             Link2 link2 = new Link2(hardwareMap, telemetry);
             Claw claw = new Claw(hardwareMap, telemetry);
-
-            if (currentEvent == EVENT.PIXEL_PICK_UP) {
-                link1.moveDown();
-                link2.moveDown2();
-                claw.open2();
-            }
-
-            if (currentEvent == EVENT.ARM_PICK_UP_POSITION) {
-                link1.moveDown();
-                link2.moveDown1();
-                claw.close();
-            }
-            if (currentEvent == EVENT.PIXEL_HOLD) {
-                link1.moveDown();
-                link2.moveDown1();
-                claw.close();
-            }
-            if (currentEvent == EVENT.BACK_DROP_1) {
-                link1.moveUp();
-                link2.moveUp();
-                claw.open1();
-            }
-            if (currentEvent == EVENT.BACK_DROP_2) {
-                link1.moveUp();
-                link2.moveUp();
-                claw.open2();
-            }
-            if (currentEvent == EVENT.STARTER_STACK_PICK_UP) {
-                link1.moveDown();
-                link2.moveDown2();
-                claw.open1();
-            }
-            if (currentEvent == EVENT.PURPLE_PIXEL_DROP) {
-                link1.moveDown();
-                link2.moveDown1();
-                claw.open1();
-            }
-            if (currentEvent == EVENT.YELLOW_PIXEL_DROP) {
-                link1.moveUp();
-                link2.moveUp();
-                claw.open2();
-            }
-
         }
 
+        public void transition(EVENT event) {
+            switch (event) {
+                case PIXEL_PICK_UP:
+                    link1.moveDown();
+                    link2.moveDown2();
+                    claw.open2();
+                case ARM_PICK_UP_POSITION:
+                    link1.moveDown();
+                    link2.moveDown1();
+                    claw.close();
+                case PIXEL_HOLD:
+                    link1.moveDown();
+                    link2.moveDown1();
+                    claw.close();
+                case BACK_DROP_1:
+                    link1.moveUp();
+                    link2.moveUp();;
+                case BACK_DROP_2:
+                    link1.moveUp();
+                    link2.moveUp();
+                    claw.open2();
+                case STARTER_STACK_PICK_UP:
+                    link1.moveDown();
+                    link2.moveDown2();
+                    claw.open1();
+                case PURPLE_PIXEL_DROP:
+                    link1.moveDown();
+                    link2.moveDown1();
+                    claw.open1();
+                case YELLOW_PIXEL_DROP:
+                    link1.moveUp();
+                    link2.moveUp();
+                    claw.open2();
+            }
+        }
     }
 }
