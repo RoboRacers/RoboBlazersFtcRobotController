@@ -79,26 +79,25 @@ public class ArmTest {
 
     class Claw {
         private String robotName;
-        Telemetry l2Telemetry;
-        HardwareMap l2hwMap;
+        Telemetry cTelemetry;
+        HardwareMap chwMap;
         Servo clawMotor;
 
-        public Claw(String name) {
-            this.robotName = name;
+        public Claw(HardwareMap hardwareMap, Telemetry telemetry) {
+            cTelemetry = telemetry;
+            chwMap = hardwareMap;
+            clawMotor = chwMap.get(Servo.class, "clawMotor");
         }
 
         public void open1() {
             clawMotor.setPosition(0.7);
-            System.out.println(robotName + " is starting.");
         }
         public void open2() {
             clawMotor.setPosition(0.9);
-            System.out.println(robotName + " is moving forward.");
         }
 
         public void close() {
             clawMotor.setPosition(0.2);
-            System.out.println(robotName + " has stopped.");
         }
     }
 
