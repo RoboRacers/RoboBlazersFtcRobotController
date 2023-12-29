@@ -26,6 +26,7 @@ public class ArmV2 {
     public Link1 link1;
     public Link2 link2;
     public Claw claw;
+    public double currentAngle;
 
 
     public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -128,7 +129,17 @@ public class ArmV2 {
         }
 
         public void moveToAngle(double angle){
-            while
+            while(currentAngle!=angle) {
+                if (currentAngle < angle) {
+                    link2ArmMotor.setPower(0.1);
+                } else if (currentAngle > angle) {
+                    link2ArmMotor.setPower(-0.1);
+                }
+
+                if (currentAngle == angle) {
+                    link2ArmMotor.setPower(0);
+                }
+            }
         }
 
     }
