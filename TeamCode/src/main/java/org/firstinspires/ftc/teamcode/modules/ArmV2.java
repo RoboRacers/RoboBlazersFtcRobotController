@@ -5,21 +5,27 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmV2 {
     public enum EVENT {
-        ARM_PICK_UP_POSITION,
+        DRIVE_WITH_PIXEL_POS,
+        DRIVE_WITHOUT_PIXEL_POS,
+        ARM_ALLIGN,
         PIXEL_PICK_UP,
-        PIXEL_HOLD,
-        BACK_DROP_1,
-        BACK_DROP_2,
+        BACK_DROP_AUTON,
+        DROP_BACKDROP,
         STARTER_STACK_PICK_UP,
-        PURPLE_PIXEL_DROP,
-        YELLOW_PIXEL_DROP,
+        DROP_BOTTOM_PIXEL,
+        DROP_BOTH_PIXELS,
+        CLAW_CLOSE,
+        ARM_INCREMENT_UP,
+        ARM_INCREMENT_DOWN,
+        ARM_MOVE_UP,
+        ARM_MOVE_DOWN,
+        ARM_STOP,
     }
     EVENT currentEvent;
 
@@ -41,37 +47,49 @@ public class ArmV2 {
 
     public void transition(EVENT event) {
         switch (event) {
-            case PIXEL_PICK_UP:
-                link1.moveDown();
-                link2.moveToAngle(15);
-                claw.open2();
-            case ARM_PICK_UP_POSITION:
-                link1.moveDown();
-                link2.moveToAngle(15);
+            case DRIVE_WITH_PIXEL_POS:
+                link2.moveToAngle(30);
                 claw.close();
-            case PIXEL_HOLD:
-                link1.moveDown();
-                link2.moveToAngle(15);
-                claw.close();
-            case BACK_DROP_1:
-                link1.moveUp();
-                link2.moveUp();;
-            case BACK_DROP_2:
-                link1.moveUp();
-                link2.moveUp();
+                link1.moveLinks(1);
+            case DROP_BOTTOM_PIXEL:
+                claw.open1();
+            case BACK_DROP_AUTON:
+                link2.moveToAngle(150);
+                link1.moveLinks(0.3);
+            case DROP_BOTH_PIXELS:
                 claw.open2();
-            case STARTER_STACK_PICK_UP:
-                link1.moveDown();
+            case ARM_ALLIGN:
                 link2.moveToAngle(50);
-                claw.open1();
-            case PURPLE_PIXEL_DROP:
-                link1.moveDown();
-                link2.moveToAngle(15);
-                claw.open1();
-            case YELLOW_PIXEL_DROP:
-                link1.moveUp();
-                link2.moveUp();
                 claw.open2();
+                link1.moveLinks(1);
+            case STARTER_STACK_PICK_UP:
+                link2.moveToAngle(30);
+                claw.open2();
+                link1.moveLinks(1);
+            case DRIVE_WITHOUT_PIXEL_POS:
+                link2.moveToAngle(30);
+                claw.open2();
+                link1.moveLinks(1);
+            case PIXEL_PICK_UP:
+                link2.moveToAngle(15);
+                link1.moveLinks(1);
+                claw.open2();
+            case CLAW_CLOSE:
+                claw.close();
+            case DROP_BACKDROP:
+                link2.moveToAngle(120);
+                link1.moveLinks(0);
+            case ARM_INCREMENT_UP:
+                link2.incrementUp();
+            case ARM_INCREMENT_DOWN:
+                link2.incrementDown();
+            case ARM_MOVE_UP:
+                link2.moveUp();
+            case ARM_MOVE_DOWN:
+                link2.moveDown();
+            case ARM_STOP:
+                link2.stopArm();
+
         }
     }
 
@@ -88,15 +106,6 @@ public class ArmV2 {
         public void moveLinks(double pos){
             l1LeftServo.setPosition(pos);
             l1RightServo.setPosition(pos);
-        }
-        public void moveUp() {
-            //drop pos
-            moveLinks(0);
-        }
-
-        public void moveDown() {
-            //pick pos
-            moveLinks(1);
         }
     }
 
@@ -145,15 +154,22 @@ public class ArmV2 {
         }
 
         public void moveToAngle(double angle){
+            double armAngle = getAngle();
             while(currentAngle!=angle) {
-                if (currentAngle < angle) {
+                armAngle = getAngle();
+                if (armAngle < angle) {
                     link2ArmMotor.setPower(0.1);
-                } else if (currentAngle > angle) {
+                } else if (armAngle > angle) {
                     link2ArmMotor.setPower(-0.1);
                 }
 
                 if (currentAngle == angle) {
                     link2ArmMotor.setPower(0);
+                    int pos = link2ArmMotor.getCurrentPosition();
+                    link2ArmMotor.setTargetPosition((int) (pos+1));
+
+                    link2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    link2ArmMotor.setPower(0.2);
                 }
             }
         }
