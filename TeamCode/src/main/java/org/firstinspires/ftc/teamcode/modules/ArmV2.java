@@ -25,10 +25,10 @@ public class ArmV2 {
 
         public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
             // Create an instance of the base class
-            Link1 link1 = new Link1(hardwareMap.get(Servo.class, "linkLeft"),
+            link1 = new Link1(hardwareMap.get(Servo.class, "linkLeft"),
                                     hardwareMap.get(Servo.class, "linkRight"));
-            Link2 link2 = new Link2(hardwareMap.get(DcMotorEx.class, "armMotor"));
-            Claw claw = new Claw(hardwareMap.get(Servo.class, "clawMotor"));
+            link2 = new Link2(hardwareMap.get(DcMotorEx.class, "armMotor"));
+            claw = new Claw(hardwareMap.get(Servo.class, "clawMotor"));
         }
 
         public void transition(EVENT event) {
