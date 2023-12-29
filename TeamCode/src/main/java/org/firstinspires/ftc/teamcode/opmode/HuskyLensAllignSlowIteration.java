@@ -90,18 +90,19 @@ public class HuskyLensAllignSlowIteration extends LinearOpMode {
         double xCoord = getDistanceX();
         double yCoord = getDistanceY();
 
-        TrajectorySequence moveToCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .splineTo(new Vector2d(xCoord, yCoord), Math.toRadians(0))
-                .build();
-
         waitForStart();
 
 
+
         while(opModeIsActive()) {
+
+
             if (!rateLimit.hasExpired()) {
                 continue;
             }
             rateLimit.reset();
+
+
 
             HuskyLens.Block[] blocks = huskyLens.blocks();
             telemetry.addData("Block count", blocks.length);
@@ -112,19 +113,31 @@ public class HuskyLensAllignSlowIteration extends LinearOpMode {
                 telemetry.addData("height: ", blocks[i].height);
                 telemetry.addData("width: ", blocks[i].width);
 
-                pixelCenterX = blocks[i].x + (blocks[i].width / 2);
-                pixelCenterY = blocks[i].y + (blocks[i].height / 2);
+                pixelCenterX = (blocks[i].x + (blocks[i].width / 2)) - 160;
+                pixelCenterY = (blocks[i].y + (blocks[i].height / 2));
+
+                if (pixelCenterY > 120){
+                    pixelCenterY -= 120;
+                }
 
                 pixelSize = blocks[i].height;
             }
+
             telemetry.update();
 
 
-            double sizeRatio = pixelSize * 2; //fix this with act size
+            double sizeRatio = 3/pixelSize; //fix this with act size
 
             xMove = sizeRatio * pixelCenterX;
 
             yMove = sizeRatio * pixelCenterY;
+
+            telemetry.addLine("x move: " + xMove + "y move: " + yMove);
+
+            TrajectorySequence moveToCenter = drive.trajectorySequenceBuilder(new Pose2d(0.01, 0, Math.toRadians(0)))
+                    .splineTo(new Vector2d(xMove, yMove), Math.toRadians(0))
+                    .build();
+
 
             drive.setPoseEstimate(moveToCenter.start());
             drive.followTrajectorySequence(moveToCenter);
@@ -134,15 +147,15 @@ public class HuskyLensAllignSlowIteration extends LinearOpMode {
                 int DisplayCenterX = 320 / 2;
                 int DisplayCenterY = 240 / 2;
 
-            if (pixelCenterX > 0 && pixelCenterX < DisplayCenterX - 15) {
-                drive.setPoseEstimate(moveToCenter.start());
-                drive.followTrajectorySequence(moveToCenter);
-            } else if (pixelCenterX > DisplayCenterX + 15 && pixelCenterX < DisplayCenterX * 2) {
-                drive.setPoseEstimate(moveToCenter.start());
-                drive.followTrajectorySequence(moveToCenter);
-            } else if (pixelCenterX > DisplayCenterX - 15 && pixelCenterX < DisplayCenterX + 15) {
-                telemetry.addLine("allign_x");
-            }
+//            if (pixelCenterX > 0 && pixelCenterX < DisplayCenterX - 15) {
+//                drive.setPoseEstimate(moveToCenter.start());
+//                drive.followTrajectorySequence(moveToCenter);
+//            } else if (pixelCenterX > DisplayCenterX + 15 && pixelCenterX < DisplayCenterX * 2) {
+//                drive.setPoseEstimate(moveToCenter.start());
+//                drive.followTrajectorySequence(moveToCenter);
+//            } else if (pixelCenterX > DisplayCenterX - 15 && pixelCenterX < DisplayCenterX + 15) {
+//                telemetry.addLine("allign_x");
+//            }
 
 
 //            if (pixelCenterY > 0 && pixelCenterY < DisplayCenterY - 15) {
