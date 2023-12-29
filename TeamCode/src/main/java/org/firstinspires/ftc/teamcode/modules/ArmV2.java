@@ -43,15 +43,15 @@ public class ArmV2 {
         switch (event) {
             case PIXEL_PICK_UP:
                 link1.moveDown();
-                link2.moveDown2();
+                link2.moveToAngle(15);
                 claw.open2();
             case ARM_PICK_UP_POSITION:
                 link1.moveDown();
-                link2.moveDown1();
+                link2.moveToAngle(15);
                 claw.close();
             case PIXEL_HOLD:
                 link1.moveDown();
-                link2.moveDown1();
+                link2.moveToAngle(15);
                 claw.close();
             case BACK_DROP_1:
                 link1.moveUp();
@@ -62,11 +62,11 @@ public class ArmV2 {
                 claw.open2();
             case STARTER_STACK_PICK_UP:
                 link1.moveDown();
-                link2.moveDown2();
+                link2.moveToAngle(50);
                 claw.open1();
             case PURPLE_PIXEL_DROP:
                 link1.moveDown();
-                link2.moveDown1();
+                link2.moveToAngle(15);
                 claw.open1();
             case YELLOW_PIXEL_DROP:
                 link1.moveUp();
@@ -116,7 +116,8 @@ public class ArmV2 {
 
             return currentAngle;
         }
-
+        //Drop for auto is 150
+        //Drop for normal is 120
         // Changing from run to position to analog POT input
         public void moveUp() {
             link2ArmMotor.setPower(0.4);
@@ -126,6 +127,21 @@ public class ArmV2 {
         }
         public void stopArm(){
             link2ArmMotor.setPower(0);
+        }
+        public void incrementUp(){
+            int pos = link2ArmMotor.getCurrentPosition();
+            link2ArmMotor.setTargetPosition((int) (pos-10));
+
+            link2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            link2ArmMotor.setPower(0.2);
+        }
+
+        public void incrementDown(){
+            int pos = link2ArmMotor.getCurrentPosition();
+            link2ArmMotor.setTargetPosition((int) (pos+10));
+
+            link2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            link2ArmMotor.setPower(0.2);
         }
 
         public void moveToAngle(double angle){
