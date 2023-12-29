@@ -131,8 +131,31 @@ public class HuskyLensAllignSlowIteration extends LinearOpMode {
 
 //            if (blocks.length != 0) {
 //
-//                int DisplayCenterX = 320 / 2;
-//                int DisplayCenterY = 240 / 2;
+                int DisplayCenterX = 320 / 2;
+                int DisplayCenterY = 240 / 2;
+
+            if (pixelCenterX > 0 && pixelCenterX < DisplayCenterX - 15) {
+                drive.setPoseEstimate(moveToCenter.start());
+                drive.followTrajectorySequence(moveToCenter);
+            } else if (pixelCenterX > DisplayCenterX + 15 && pixelCenterX < DisplayCenterX * 2) {
+                drive.setPoseEstimate(moveToCenter.start());
+                drive.followTrajectorySequence(moveToCenter);
+            } else if (pixelCenterX > DisplayCenterX - 15 && pixelCenterX < DisplayCenterX + 15) {
+                telemetry.addLine("allign_x");
+            }
+
+
+//            if (pixelCenterY > 0 && pixelCenterY < DisplayCenterY - 15) {
+//                drive.setPoseEstimate(moveToCenter.start());
+//                drive.followTrajectorySequence(moveToCenter);
+//            } else if (pixelCenterY > DisplayCenterY + 15 && pixelCenterY < DisplayCenterY * 2) {
+//                drive.setPoseEstimate(moveToCenter.start());
+//                drive.followTrajectorySequence(moveToCenter);
+//            } else if (pixelCenterY > DisplayCenterY - 15 && pixelCenterY < DisplayCenterY + 15) {
+//                telemetry.addLine("allign_y");
+//            }
+
+
 //
 //                String directionX = "NAX";
 //                String directionY = "NAY";
