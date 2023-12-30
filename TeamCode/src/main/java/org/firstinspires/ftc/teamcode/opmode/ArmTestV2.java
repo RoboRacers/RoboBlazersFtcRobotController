@@ -56,9 +56,7 @@ public class ArmTestV2 extends LinearOpMode {
                 debugLog("Increment Up");
             }
 
-
-
-
+            pixelArm.update();
             telemetry.update();
         }
     }
