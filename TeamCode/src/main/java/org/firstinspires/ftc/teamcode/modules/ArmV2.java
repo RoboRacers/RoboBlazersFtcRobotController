@@ -26,7 +26,8 @@ public class ArmV2 {
         BACK_DROP_AUTON,
         DROP_BACKDROP,
         STARTER_STACK_PICK_UP,
-        DROP_BOTTOM_PIXEL,
+        DROP_LEFT_PIXEL,
+        DROP_RIGHT_PIXEL,
         DROP_BOTH_PIXELS,
         CLAW_CLOSE,
         ARM_INCREMENT_UP,
@@ -34,6 +35,7 @@ public class ArmV2 {
         ARM_MOVE_UP,
         ARM_MOVE_DOWN,
         ARM_STOP,
+        PID
     }
     EVENT currentEvent;
 
@@ -45,13 +47,14 @@ public class ArmV2 {
     public double targetAngle;
 
     public double power=0.2;
-
-    //private double targetPosition = 1000; // Target encoder position
-    private double kp = 0.1; // Proportional gain
-    private double ki = 0.01; // Integral gain
-    private double kd = 0.01; // Derivative gain
+    double l2targetAngle = 0;
+    private double kp = 0.009; // Proportional gain
+    private double ki = 0; // Integral gain
+    private double kd = 0; // Derivative gain
     private double integral = 0;
     private double previousError = 0;
+
+    public boolean PID_Trigger = false;
 
     Telemetry armTelemetry;
     public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -61,59 +64,61 @@ public class ArmV2 {
 
         link2 = new Link2(hardwareMap.get(DcMotorEx.class, "armMotor"), hardwareMap.get(AnalogInput.class, "pot"));
 
-        claw = new Claw(hardwareMap.get(Servo.class, "clawMotor"));
+        claw = new Claw(hardwareMap.get(Servo.class, "clawLeft"), hardwareMap.get(Servo.class, "clawRight"));
         armTelemetry = telemetry;
     }
 
     public void transition(EVENT event) {
         switch (event) {
             case DRIVE_WITH_PIXEL_POS:
-                link2.moveToAngle(30);
-                claw.close();
-                link1.moveLinks(1);
-                break;
-            case DROP_BOTTOM_PIXEL:
-                claw.open1();
-                break;
-            case BACK_DROP_AUTON:
-                link2.moveToAngle(150);
-                link1.moveLinks(0.3);
-                break;
-            case DROP_BOTH_PIXELS:
-                claw.open2();
-                break;
-            case ARM_ALLIGN:
-                link2.moveToAngle(50);
-                claw.open2();
-                link1.moveLinks(1);
-                break;
-            case STARTER_STACK_PICK_UP:
-                link2.moveToAngle(30);
-                claw.open2();
-                link1.moveLinks(1);
-                break;
-            case DRIVE_WITHOUT_PIXEL_POS:
-                link2.moveToAngle(30);
-                claw.open2();
-                link1.moveLinks(1);
-                break;
-            case PIXEL_PICK_UP:
-                link2.moveToAngle(15);
-                link1.moveLinks(1);
-                claw.open2();
-                break;
-            case CLAW_CLOSE:
-                claw.close();
-                break;
-            case DROP_BACKDROP:
-                link2.moveToAngle(120);
+                link2.updateTargetPos(30);
+                claw.moveBothClaws(0.5);
                 link1.moveLinks(0);
                 break;
+            case DROP_LEFT_PIXEL:
+                claw.moveClaw(claw.clawServoL, 0);
+                break;
+            case DROP_RIGHT_PIXEL:
+                claw.moveClaw(claw.clawServoR, 0);
+            case BACK_DROP_AUTON:
+                link2.updateTargetPos(150);
+                link1.moveLinks(0.7);
+                break;
+            case DROP_BOTH_PIXELS:
+                claw.moveBothClaws(0);
+                break;
+            case ARM_ALLIGN:
+                link2.updateTargetPos(50);
+                claw.moveBothClaws(0);
+                link1.moveLinks(0);
+                break;
+            case STARTER_STACK_PICK_UP:
+                link2.updateTargetPos(30);
+                claw.moveBothClaws(0);
+                link1.moveLinks(0);
+                break;
+            case DRIVE_WITHOUT_PIXEL_POS:
+                link2.updateTargetPos(30);
+                claw.moveBothClaws(0);
+                link1.moveLinks(0);
+                break;
+            case PIXEL_PICK_UP:
+                link2.updateTargetPos(15);
+                link1.moveLinks(0);
+                claw.moveBothClaws(0);
+                break;
+            case CLAW_CLOSE:
+                claw.moveBothClaws(0.5);
+                break;
+            case DROP_BACKDROP:
+                link2.updateTargetPos(120);
+                link1.moveLinks(1);
+                break;
             case ARM_INCREMENT_UP:
-                link2.incrementUp();
+                link2.updateTargetPos(link2.getAngle()+5);
                 break;
             case ARM_INCREMENT_DOWN:
-                link2.incrementDown();
+                link2.updateTargetPos(link2.getAngle()-5);
                 break;
             case ARM_MOVE_UP:
                 link2.moveUp();
@@ -124,13 +129,21 @@ public class ArmV2 {
             case ARM_STOP:
                 link2.stopArm();
                 break;
+            case PID:
+                PID_Trigger = !(PID_Trigger);
+
         }
     }
 
+
+
     public void update()
     {
-        link2.update();
-        armTelemetry.addData("L2 target angle", link2.l2targetAngle );
+        //link2.update();
+        if (PID_Trigger) {
+            link2.pid(targetAngle);
+        }
+        armTelemetry.addData("L2 target angle", targetAngle );
         armTelemetry.addData("L2 state", link2.L2State);
         armTelemetry.addData("L2 current angle", link2.getAngle());
         armTelemetry.update();
@@ -143,7 +156,6 @@ public class ArmV2 {
         public Link1(Servo leftServo, Servo rightServo) {
             l1LeftServo = leftServo;
             l1RightServo = rightServo;
-            l1LeftServo.setDirection(Servo.Direction.REVERSE);
         }
 
         public void moveLinks(double pos){
@@ -214,8 +226,8 @@ public class ArmV2 {
             }
         }
 
-        public void update() {
-            currentAngle = getAngle();
+//        public void update() {
+//            currentAngle = getAngle();
 //            if (L2State == STATE.MOVING_L2_DOWN) {
 //                if (currentAngle < l2targetAngle) {
 //                    link2ArmMotor.setPower(0);
@@ -230,7 +242,12 @@ public class ArmV2 {
 //                    link2ArmMotor.setPower(0);
 //                }
 //            }
-            double error = l2targetAngle - currentAngle;
+//
+//        }
+
+        public void pid(double target){
+            double angle = getAngle();
+            double error = target - angle;
 
             // Proportional term
             double proportional = kp * error;
@@ -246,30 +263,37 @@ public class ArmV2 {
             double output = proportional + integral + derivative;
 
             // Apply the output to the motor
-            link2ArmMotor.setPower(output);
+            link2ArmMotor.setPower(-output);
 
             // Update previous error
             previousError = error;
 
             // Check if the motor has reached the target position
-            if (Math.abs(error) < 10) {
+            if (Math.abs(error) < 1) {
                 link2ArmMotor.setPower(0); // Stop the motor
             }
 
         }
+        public void updateTargetPos(double target){
+            targetAngle = target;
+        }
     }
 
     private class Claw {
-        Servo clawServo;
-        public Claw(Servo cservo) {clawServo = cservo;}
-        public void open1() {
-            clawServo.setPosition(0.5);
-        } //Drops bottom pixel
-        public void open2() {
-            clawServo.setPosition(0.2);
-        } //Drops both pixel
-        public void close() {
-            clawServo.setPosition(0.9);
+        Servo clawServoL;
+        Servo clawServoR;
+        public Claw(Servo clawLeft, Servo clawRight) {
+            clawServoL = clawLeft;
+            clawServoR = clawRight;
+            clawServoR.setDirection(Servo.Direction.REVERSE);
+        }
+
+        public void moveClaw(Servo servo, double pos){
+            servo.setPosition(pos);
+        }
+        public void moveBothClaws(double pos){
+            clawServoR.setPosition(pos);
+            clawServoL.setPosition(pos);
         }
     }
 }

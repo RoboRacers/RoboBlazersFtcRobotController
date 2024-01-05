@@ -184,7 +184,7 @@ public class Arm {
     public void armSetDropPos(){
         pixelArm.setTargetPosition((int) dropPos);
         pixelArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pixelArm.setPower(0.4);
+        pixelArm.setPower(1);
 
 
         setLink(0);

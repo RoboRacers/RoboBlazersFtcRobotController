@@ -15,7 +15,8 @@ public class ClawTest extends LinearOpMode {
         linkLeft = hardwareMap.get(Servo.class, ("linkLeft"));
         //linkLeft.setDirection(Servo.Direction.REVERSE);
         linkRight = hardwareMap.get(Servo.class, ("linkRight"));
-        linkRight.setDirection(Servo.Direction.REVERSE);
+        //linkRight.setDirection(Servo.Direction.REVERSE);
+
 
         waitForStart();
         while (opModeIsActive()) {

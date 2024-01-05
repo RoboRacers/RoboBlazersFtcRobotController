@@ -3,38 +3,27 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-
 @TeleOp
 public class ClawTestV2 extends LinearOpMode {
-    boolean debug = false;
-    Servo claw;
+    Servo clawLeft;
+    Servo clawRight;
+
+
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
-       claw = hardwareMap.get(Servo.class, "clawMotor");
+        clawLeft = hardwareMap.get(Servo.class, ("linkLeft"));
+        clawRight = hardwareMap.get(Servo.class, ("linkRight"));
+        clawRight.setDirection(Servo.Direction.REVERSE);
+
+
         waitForStart();
-        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad2.a){
-                claw.setPosition(1.0);
-                debugLog("Claw Close");
-            }
-            if(gamepad2.b){
-                claw.setPosition(0.7);
-                debugLog("Claw half Open");
-            }
-            if(gamepad2.y){
-                claw.setPosition(0.2);
-                debugLog("Claw full Open");
-            }
-
-        }
-    }
-
-    public void debugLog(String statement){
-        if (debug) {
-            telemetry.addLine(statement);
+            telemetry.addData("Gamepad value LEFT", gamepad1.left_stick_y);
+            telemetry.addData("Gamepad value RIGHT", gamepad1.right_stick_y);
             telemetry.update();
+            clawLeft.setPosition(gamepad1.left_stick_y);
+            clawRight.setPosition(gamepad1.left_stick_y);
         }
     }
 }
