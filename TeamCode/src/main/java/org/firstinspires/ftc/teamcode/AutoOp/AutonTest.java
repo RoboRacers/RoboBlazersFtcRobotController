@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 //import org.firstinspires.ftc.teamcode.RobotCore;
 import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.Arrays;
 
@@ -47,6 +48,7 @@ public class AutonTest extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
+
         TrajectorySequence untitled01 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))// 90 is facing red
                 //.lineTo(new Vector2d(36, 0))
                 //.lineTo(new Vector2d(-36.00, -20.00))
@@ -85,29 +87,52 @@ public class AutonTest extends LinearOpMode {
                 .build();
 
 
+//        TrajectorySequence untitled2 = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 65.77, Math.toRadians(264.99)))
+//                .splineTo(new Vector2d(-41.75, 33.15), Math.toRadians(180.00))
+//                .splineTo(new Vector2d(-39.08, 13.57), Math.toRadians(0.00))
+//                .splineTo(new Vector2d(44.42, 7.64), Math.toRadians(88.85))
+//                .splineTo(new Vector2d(45.60, 39.67), Math.toRadians(3.81))
+//                .build();
+//
+//        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(-36.04, 62.10, Math.toRadians(270.00)))
+//                .splineTo(new Vector2d(-35.87, 29), Math.toRadians(-89.71))
+//                .lineTo(new Vector2d(-36.04, 45.42))
+//                .splineTo(new Vector2d(-48, 40.73), Math.toRadians(267.61))
+//                .splineTo(new Vector2d(-50, 27.45), Math.toRadians(269.38))
+//                .splineTo(new Vector2d(-0.26, 12.55), Math.toRadians(-3.18))
+//                .splineTo(new Vector2d(31.87, 11.20), Math.toRadians(0.61))
+//                .splineTo(new Vector2d(49.94, 34.13), Math.toRadians(0.66))
+//                .build();
+//        TrajectorySequence untitled1 = drive.trajectorySequenceBuilder(new Pose2d(-33.74, 66.66, Math.toRadians(265.24)))
+//                .splineTo(new Vector2d(-28.25, 31.81), Math.toRadians(3.58))
+//                .splineTo(new Vector2d(-27.81, 42.19), Math.toRadians(171.25))
+//                .splineTo(new Vector2d(-46.94, 44.71), Math.toRadians(261.98))
+//                .splineTo(new Vector2d(-28.55, -0.07), Math.toRadians(15.15))
+//                .splineTo(new Vector2d(37.00, 25.14), Math.toRadians(92.20))
+//                .splineTo(new Vector2d(47.83, 37.45), Math.toRadians(174.22))
+//                .build();
+//                         ^^ Not working paths
+        TrajectorySequence BlueFarLeft = drive.trajectorySequenceBuilder(new Pose2d(-34.92, 64.44, Math.toRadians(90.00)))
+                .lineToSplineHeading(new Pose2d(-35.07, 30.92, Math.toRadians(172.41)))
+                .lineToSplineHeading(new Pose2d(-20.09, 31.07, Math.toRadians(180.00)))
+                .lineToConstantHeading(new Vector2d(47.98, 31.96))
+                .build();
 
-        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(new Pose2d(-36.04, 62.10, Math.toRadians(270.00)))
-                .splineTo(new Vector2d(-35.87, 29), Math.toRadians(-89.71))
-                .lineTo(new Vector2d(-36.04, 45.42))
-                .splineTo(new Vector2d(-48, 40.73), Math.toRadians(267.61))
-                .splineTo(new Vector2d(-50, 27.45), Math.toRadians(269.38))
-                .splineTo(new Vector2d(-0.26, 12.55), Math.toRadians(-3.18))
-                .splineTo(new Vector2d(31.87, 11.20), Math.toRadians(0.61))
-                .splineTo(new Vector2d(49.94, 34.13), Math.toRadians(0.66))
+        TrajectorySequence BlueFarRight = drive.trajectorySequenceBuilder(new Pose2d(-34.92, 62.21, Math.toRadians(-83.66)))
+                .splineTo(new Vector2d(-31.37, 32.11), Math.toRadians(-1.94))
+                .splineTo(new Vector2d(-11.79, 28.25), Math.toRadians(-87.74))
+                .splineTo(new Vector2d(10.16, -3.63), Math.toRadians(22.50))
+                .splineTo(new Vector2d(47.83, 34.92), Math.toRadians(0.00))
                 .build();
-        TrajectorySequence untitled1 = drive.trajectorySequenceBuilder(new Pose2d(-36.56, 63.70, Math.toRadians(-89.30)))
-                .splineTo(new Vector2d(-28.84, 32.55), Math.toRadians(-4.64))
-                .splineTo(new Vector2d(-46.79, 29.73), Math.toRadians(230.87))
-                .splineTo(new Vector2d(-41.01, 12.53), Math.toRadians(1.12))
-                .splineTo(new Vector2d(32.55, 13.87), Math.toRadians(90.00))
-                .splineTo(new Vector2d(44.12, 36.26), Math.toRadians(178.60))
+        TrajectorySequence BlueFarCenter = drive.trajectorySequenceBuilder(new Pose2d(-34.63, 63.25, Math.toRadians(90.00)))
+                .splineToConstantHeading(new Vector2d(-34.63, 21.87), Math.toRadians(90.00))
+                .lineToConstantHeading(new Vector2d(-34.63, 5.26))
+                .lineToSplineHeading(new Pose2d(-0.67, 3.49, Math.toRadians(167.91)))
+                .splineToSplineHeading(new Pose2d(51.09, 31.96, Math.toRadians(-4.09)), Math.toRadians(184.73))
                 .build();
-        TrajectorySequence untitled2 = drive.trajectorySequenceBuilder(new Pose2d(-35.52, 66.96, Math.toRadians(-86.73)))
-                .splineTo(new Vector2d(-42.93, 31.51), Math.toRadians(183.95))
-                .lineToSplineHeading(new Pose2d(-33.29, 6.30, Math.toRadians(0.00)))
-                .splineTo(new Vector2d(32.85, 2.60), Math.toRadians(69.15))
-                .splineTo(new Vector2d(43.23, 33.89), Math.toRadians(187.31))
-                .build();
+
+
+
 
 
 
@@ -129,9 +154,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(untitled2.start());
+        drive.setPoseEstimate(BlueFarLeft.start());
 
-        drive.followTrajectorySequence(untitled2);
+        drive.followTrajectorySequence(BlueFarLeft);
     }
 
 }
