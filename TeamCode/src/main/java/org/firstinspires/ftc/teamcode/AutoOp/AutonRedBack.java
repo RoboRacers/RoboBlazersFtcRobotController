@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.AutoOp;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
@@ -66,24 +67,25 @@ public class AutonRedBack extends LinearOpMode {
         6. +y towards blue
          */
 
-        //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence RedBackRight = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-
-                .forward(8)
-                .strafeRight(7)
-                .forward(24)
-                .back(8)
-                .turn(-90)
-                .back(32)
-                //.turn(180)
+        TrajectorySequence RedCloseCenter = drive.trajectorySequenceBuilder(new Pose2d(12.53, -59.69, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(10.46, -9.57))
+                .setReversed(true)
+                .splineTo(new Vector2d(36.11, -8.38), Math.toRadians(0.00))
+                .lineTo(new Vector2d(41, -30.33))
                 .build();
-
-        TrajectorySequence RedBackCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .forward(37)
-                .back(12)
-                .turn(-90)
-                .back(36)
-                //.turn(180)
+        TrajectorySequence RedCloseLeft = drive.trajectorySequenceBuilder(new Pose2d(12.09, -59.54, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(11.05, -30.33))
+                .setReversed(true)
+                .splineTo(new Vector2d(43.08, -36.26), Math.toRadians(0.00))
+                .build();
+        TrajectorySequence RedCloseRight = drive.trajectorySequenceBuilder(new Pose2d(11.49, -59.25, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(11.64, -44.42))
+                .setReversed(true)
+                .splineTo(new Vector2d(11.64, -32.85), Math.toRadians(0.00))
+                .lineTo(new Vector2d(5.86, -33.29))
+                .setReversed(false)
+                .lineTo(new Vector2d(40.56, -21.43))
+                .setReversed(true)
                 .build();
 
 
@@ -97,13 +99,18 @@ public class AutonRedBack extends LinearOpMode {
 
 
                 if (direction == "center") {
-                    drive.setPoseEstimate(RedBackCenter.start());
-                    drive.followTrajectorySequence(RedBackCenter);
+                    drive.setPoseEstimate(RedCloseCenter.start());
+                    drive.followTrajectorySequence(RedCloseCenter);
                     break;
                 }
                 else if (direction == "right") {
-                    drive.setPoseEstimate(RedBackRight.start());
-                    drive.followTrajectorySequence(RedBackRight);
+                    drive.setPoseEstimate(RedCloseRight.start());
+                    drive.followTrajectorySequence(RedCloseRight);
+                    break;
+                }
+                else if (direction == "left") {
+                    drive.setPoseEstimate(RedCloseLeft.start());
+                    drive.followTrajectorySequence(RedCloseLeft);
                     break;
                 }
                 camera.closeCameraDevice();

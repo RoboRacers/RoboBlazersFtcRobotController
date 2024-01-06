@@ -72,31 +72,29 @@ public class AutonRedFront extends LinearOpMode {
          */
 
         //RobotCore robot = new RobotCore(hardwareMap);
-        TrajectorySequence AutonRedCenter = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .forward(37)
-                .back(10)
-                .strafeLeft(15)
-                .forward(28)
-                .turn(Math.toRadians(-90))
-                .strafeLeft(2)
-                .back(72)
-                .strafeLeft(26)
-                .back(30)
-                //.turn(180)
+        TrajectorySequence RedFarCenter = drive.trajectorySequenceBuilder(new Pose2d(-36.70, -68.74, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-36.41, -19.06))
+                .setReversed(true)
+                .splineTo(new Vector2d(-18.61, -12.23), Math.toRadians(7.57))
+                .splineTo(new Vector2d(30.48, -14.76), Math.toRadians(20.35))
+                .splineTo(new Vector2d(50.79, -28.40), Math.toRadians(6.71))
                 .build();
-
-        TrajectorySequence AutonRedLeft = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .forward(8)
-                .strafeLeft(7)
-                .forward(24)
-                .back(12)
-                .strafeLeft(8)
-                .forward(35)
-                .turn(-90)
-                .back(72)
-                .strafeLeft(32)
-                .back(30)
-                //.turn(180)
+        TrajectorySequence RedFarLeft = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-50.20, -45.90))
+                .setReversed(true)
+                .splineTo(new Vector2d(-18.17, -33.15), Math.toRadians(0.00))
+                .lineTo(new Vector2d(-18.17, -4.67))
+                .setReversed(false)
+                .lineTo(new Vector2d(36.26, -9.27))
+                .setReversed(true)
+                .lineTo(new Vector2d(42.19, -40.86))
+                .build();
+        TrajectorySequence RedFarRight = drive.trajectorySequenceBuilder(new Pose2d(-37.15, 59.99, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-48.72, -49.01))
+                .setReversed(true)
+                .lineTo(new Vector2d(-48.72, -27.66))
+                .splineTo(new Vector2d(39.23, -10.75), Math.toRadians(0.00))
+                .lineTo(new Vector2d(46.79, -35.22))
                 .build();
 
 
@@ -109,13 +107,18 @@ public class AutonRedFront extends LinearOpMode {
 
 
                 if (direction == "center") {
-                    drive.setPoseEstimate(AutonRedCenter.start());
-                    drive.followTrajectorySequence(AutonRedCenter);
+                    drive.setPoseEstimate(RedFarCenter.start());
+                    drive.followTrajectorySequence(RedFarCenter);
                     break;
                 }
                 else if (direction == "left") {
-                    drive.setPoseEstimate(AutonRedLeft.start());
-                    drive.followTrajectorySequence(AutonRedLeft);
+                    drive.setPoseEstimate(RedFarLeft.start());
+                    drive.followTrajectorySequence(RedFarLeft);
+                    break;
+                }
+                else if (direction == "right") {
+                    drive.setPoseEstimate(RedFarRight.start());
+                    drive.followTrajectorySequence(RedFarRight);
                     break;
                 }
                 camera.closeCameraDevice();
