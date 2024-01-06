@@ -15,13 +15,13 @@ public class ArmV2 {
     public enum STATE {
         MOVING_L2_UP,
         MOVING_L2_DOWN,
-        LINK2_IDEL
-    };
+        LINK2_IDLE
+    }
 
     public enum EVENT {
         DRIVE_WITH_PIXEL_POS,
         DRIVE_WITHOUT_PIXEL_POS,
-        ARM_ALLIGN,
+        ARM_ALIGN,
         PIXEL_PICK_UP,
         BACK_DROP_AUTON,
         DROP_BACKDROP,
@@ -87,7 +87,7 @@ public class ArmV2 {
             case DROP_BOTH_PIXELS:
                 claw.moveBothClaws(0);
                 break;
-            case ARM_ALLIGN:
+            case ARM_ALIGN:
                 link2.updateTargetPos(50);
                 claw.moveBothClaws(0);
                 link1.moveLinks(0);
@@ -171,7 +171,7 @@ public class ArmV2 {
 
 
 
-        public STATE L2State = STATE.LINK2_IDEL;
+        public STATE L2State = STATE.LINK2_IDLE;
 
         public Link2(DcMotorEx armMotor, AnalogInput pot) {
             link2ArmMotor = armMotor;
