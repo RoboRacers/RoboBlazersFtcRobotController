@@ -150,6 +150,86 @@ public class AutonTest extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-18.61, -35.96))
                 .lineToSplineHeading(new Pose2d(53.91, -36.85, Math.toRadians(-1.36)))
                 .build();
+        TrajectorySequence BlueFarCenterTwo = drive.trajectorySequenceBuilder(new Pose2d(-36.70, 68.74, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-36.41, 19.06))
+                .setReversed(true)
+                .splineTo(new Vector2d(-18.61, 12.23), Math.toRadians(7.57))
+                .splineTo(new Vector2d(30.48, 14.76), Math.toRadians(20.35))
+                .splineTo(new Vector2d(50.79, 28.40), Math.toRadians(6.71))
+                .build();
+        TrajectorySequence BlueFarLeftTwo = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-50.20, 45.90))
+                .setReversed(true)
+                .splineTo(new Vector2d(-18.17, 33.15), Math.toRadians(0.00))
+                .lineTo(new Vector2d(-18.17, 4.67))
+                .setReversed(false)
+                .lineTo(new Vector2d(36.26, 9.27))
+                .setReversed(true)
+                .lineTo(new Vector2d(42.19, 40.86))
+                .build();
+        TrajectorySequence BlueFarRightTwo = drive.trajectorySequenceBuilder(new Pose2d(-37.15, 59.99, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-48.72, 49.01))
+                .setReversed(true)
+                .lineTo(new Vector2d(-48.72, 27.66))
+                .splineTo(new Vector2d(39.23, 10.75), Math.toRadians(0.00))
+                .lineTo(new Vector2d(46.79, 35.22))
+                .build();
+        TrajectorySequence BlueCloseCenterTwo = drive.trajectorySequenceBuilder(new Pose2d(12.53, 59.69, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(10.46, 9.57))
+                .setReversed(true)
+                .splineTo(new Vector2d(36.11, 8.38), Math.toRadians(0.00))
+                .lineTo(new Vector2d(41, 30.33))
+                .build();
+        TrajectorySequence BlueCloseLeftTwo = drive.trajectorySequenceBuilder(new Pose2d(12.09, 59.54, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(11.05, 30.33))
+                .setReversed(true)
+                .splineTo(new Vector2d(43.08, 36.26), Math.toRadians(0.00))
+                .build();
+        TrajectorySequence BlueCloseRightTwo = drive.trajectorySequenceBuilder(new Pose2d(11.49, 59.25, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(11.64, 44.42))
+                .setReversed(true)
+                .splineTo(new Vector2d(11.64, 32.85), Math.toRadians(0.00))
+                .lineTo(new Vector2d(5.86, 33.29))
+                .setReversed(false)
+                .lineTo(new Vector2d(40.56, 21.43))
+                .setReversed(true)
+                .build();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -173,9 +253,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(BlueFarLeft.start());
+        drive.setPoseEstimate(BlueCloseRightTwo.start());
 
-        drive.followTrajectorySequence(BlueFarLeft);
+        drive.followTrajectorySequence(BlueCloseRightTwo);
     }
 
 }
