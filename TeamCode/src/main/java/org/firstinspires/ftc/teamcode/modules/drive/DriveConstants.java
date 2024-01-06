@@ -93,7 +93,7 @@ public class DriveConstants {
      */
 //    public static double MAX_VEL = 44; // Default - 65
 
-    public static double MAX_VEL = MAX_RPM/60*GEAR_RATIO*WHEEL_RADIUS*Math.toRadians(360)*0.7; // Default - 65
+    public static double MAX_VEL = MAX_RPM/60*GEAR_RATIO*WHEEL_RADIUS*Math.toRadians(360)*1; // Default - 65
     //    public static double MAX_ACCEL = 44; // Default - 45
     public static double MAX_ACCEL = MAX_VEL;
     //
