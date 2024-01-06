@@ -49,7 +49,7 @@ public class ArmV2 {
     public double power=0.2;
     double l2targetAngle = 0;
     private double kp = 0.009; // Proportional gain
-    private double ki = 0.0001; // Integral gain
+    private double ki = 0; // Integral gain
     private double kd = 0; // Derivative gain
     private double integral = 0;
     private double previousError = 0;
