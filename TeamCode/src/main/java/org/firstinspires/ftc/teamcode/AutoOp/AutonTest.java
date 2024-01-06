@@ -112,8 +112,13 @@ public class AutonTest extends LinearOpMode {
 //                .splineTo(new Vector2d(47.83, 37.45), Math.toRadians(174.22))
 //                .build();
 //                         ^^ Not working paths
+
+
+
+
+
         TrajectorySequence BlueFarLeft = drive.trajectorySequenceBuilder(new Pose2d(-34.92, 64.44, Math.toRadians(90.00)))
-                .lineToSplineHeading(new Pose2d(-35.07, 30.92, Math.toRadians(172.41)))
+                .lineToSplineHeading(new Pose2d(-35.07, 30.92, Math.toRadians(180)))
                 .lineToSplineHeading(new Pose2d(-20.09, 31.07, Math.toRadians(180.00)))
                 .lineToConstantHeading(new Vector2d(47.98, 31.96))
                 .build();
@@ -130,6 +135,18 @@ public class AutonTest extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-0.67, 3.49, Math.toRadians(167.91)))
                 .splineToSplineHeading(new Pose2d(51.09, 31.96, Math.toRadians(-4.09)), Math.toRadians(184.73))
                 .build();
+
+        TrajectorySequence newBlueFarCenter = drive.trajectorySequenceBuilder(new Pose2d(-38.19, 56.41, Math.toRadians(90.00)))
+                //.splineTo(new Vector2d(-35.87, 27.88), Math.toRadians(89.71))
+                .lineTo(new Vector2d(-36.04, 45.42))
+                .splineTo(new Vector2d(-55.15, 40.91), Math.toRadians(267.61))
+                .splineTo(new Vector2d(-56.71, 23.19), Math.toRadians(269.38))
+                .splineTo(new Vector2d(0.26, 6.69), Math.toRadians(-3.18))
+                .splineTo(new Vector2d(33.09, 7.03), Math.toRadians(0.61))
+                .splineTo(new Vector2d(33.09, 33.44), Math.toRadians(1.91))
+                .splineTo(new Vector2d(48.20, 33.61), Math.toRadians(0.66))
+                .build();
+
 
 
 
@@ -154,9 +171,9 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(BlueFarLeft.start());
+        drive.setPoseEstimate(newBlueFarCenter.start());
 
-        drive.followTrajectorySequence(BlueFarLeft);
+        drive.followTrajectorySequence(newBlueFarCenter);
     }
 
 }
