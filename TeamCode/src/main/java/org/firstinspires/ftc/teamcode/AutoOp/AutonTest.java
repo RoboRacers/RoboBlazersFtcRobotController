@@ -13,9 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
+import org.firstinspires.ftc.teamcode.modules.ArmV2;
 import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 //import org.firstinspires.ftc.teamcode.RobotCore;
+import org.firstinspires.ftc.teamcode.modules.ArmV2;
 import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.modules.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -28,11 +31,17 @@ public class AutonTest extends LinearOpMode {
 
     boolean finished = false;
     public SampleMecanumDrive drive;
+
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        ArmV2 pixelArm = new ArmV2(hardwareMap, telemetry);
+
+        pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
+        //pixelArm.transition(ArmV2.EVENT.AUTON_START);
 
         TrajectoryVelocityConstraint slowCont = new MinVelocityConstraint(Arrays.asList(
                 new TranslationalVelocityConstraint(0.2),
@@ -129,7 +138,7 @@ public class AutonTest extends LinearOpMode {
                 .splineTo(new Vector2d(10.16, -3.63), Math.toRadians(22.50))
                 .splineTo(new Vector2d(47.83, 34.92), Math.toRadians(0.00))
                 .build();
-        TrajectorySequence BlueFarCenter = drive.trajectorySequenceBuilder(new Pose2d(-34.63, 63.25, Math.toRadians(90.00)))
+        TrajectorySequence BlueFarCenter_0 = drive.trajectorySequenceBuilder(new Pose2d(-34.63, 63.25, Math.toRadians(90.00)))
                 .splineToConstantHeading(new Vector2d(-34.63, 21.87), Math.toRadians(90.00))
                 .lineToConstantHeading(new Vector2d(-34.63, 5.26))
                 .lineToSplineHeading(new Pose2d(-0.67, 3.49, Math.toRadians(167.91)))
@@ -147,22 +156,21 @@ public class AutonTest extends LinearOpMode {
                 .splineTo(new Vector2d(48.20, 33.61), Math.toRadians(0.66))
                 .build();
 
+        TrajectorySequence BlueFarCenter_p1 = drive.trajectorySequenceBuilder(
+                new Pose2d(-36.70, 68.74, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-36.41, 16))
+                .build();
 
+        TrajectorySequence BlueFarCenter_p2 = drive.trajectorySequenceBuilder(BlueFarCenter_p1.end())
+                .setReversed(true)
+                .splineTo(new Vector2d(-18.61, 12.23), Math.toRadians(7.57))
+                .splineTo(new Vector2d(30.48, 14.76), Math.toRadians(20.35))
+                .splineTo(new Vector2d(35, 37.40), Math.toRadians(0))
+                .build();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(BlueFarCenter_p2.end())
+                .back(12)
+                .build();
 
 
         while(!isStopRequested() && !opModeIsActive()) {
@@ -171,9 +179,55 @@ public class AutonTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        drive.setPoseEstimate(newBlueFarCenter.start());
+        pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
+        pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
+        drive.setPoseEstimate(BlueFarCenter_p1.start());
+        drive.followTrajectorySequence(BlueFarCenter_p1);
+        pixelArm.transition(ArmV2.EVENT.DROP_PURPLE);
+        sleep(1000);
+        pixelArm.transition(ArmV2.EVENT.DROP_RIGHT_PIXEL);
+        sleep(500);
+        pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
 
-        drive.followTrajectorySequence(newBlueFarCenter);
+        drive.setPoseEstimate(BlueFarCenter_p2.start());
+        drive.followTrajectorySequence(BlueFarCenter_p2);
+
+        //pixelArm.transition(ArmV2.EVENT.BACK_DROP_AUTON);
+        //drive.setPoseEstimate(moveForward.start());
+        //drive.followTrajectorySequence(moveForward);
+        //sleep(2000);
+        //pixelArm.transition(ArmV2.EVENT.DROP_LEFT_PIXEL);
+
+        int level1 = 0;
+
+        while (!isStopRequested()) {
+            drive.update();
+            if (level1 == 0){
+                pixelArm.transition(ArmV2.EVENT.DROP_BACKDROP);
+                drive.setPoseEstimate(moveForward.start());
+                drive.followTrajectorySequence(moveForward);
+                //sleep(2000);
+                level1++;
+            }
+            if (pixelArm.armReached == false)
+            {
+                pixelArm.update();
+            }
+            else
+            {
+                sleep(2000);
+
+                pixelArm.transition(ArmV2.EVENT.DROP_LEFT_PIXEL);
+                sleep(2000);
+
+                break;
+
+            }
+//            pixelArm.update();
+
+            telemetry.addLine("DROP POS");
+            telemetry.update();
+        }
     }
 
 }

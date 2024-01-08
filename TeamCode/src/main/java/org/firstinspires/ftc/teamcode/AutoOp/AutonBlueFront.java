@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.modules.Arm;
+import org.firstinspires.ftc.teamcode.modules.ArmV2;
 import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 //import org.firstinspires.ftc.teamcode.RobotCore;
@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 
 @Config
-@Autonomous(name = "Robotblazers auto path test blue", group = "23692")
+@Autonomous(name = "Robotblazers BLUE FRONT", group = "23692")
 public class AutonBlueFront extends LinearOpMode {
 
     boolean finished = false;
@@ -43,12 +43,10 @@ public class AutonBlueFront extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Arm pixelArm = new Arm(hardwareMap, telemetry);
-        pixelArm.resetEncoder();
+        ArmV2 pixelArm = new ArmV2(hardwareMap, telemetry);
         //pixelArm.startPosInAuton(-200);
 
-        pixelArm.clawOpen();
-
+        pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
@@ -71,60 +69,124 @@ public class AutonBlueFront extends LinearOpMode {
         6. +y towards blue
          */
 
-        TrajectorySequence BlueFarCenter = drive.trajectorySequenceBuilder(new Pose2d(-36.70, 68.74, Math.toRadians(90.00)))
+        TrajectorySequence BlueFarCenter_p1 = drive.trajectorySequenceBuilder(
+                        new Pose2d(-36.70, 68.74, Math.toRadians(90.00)))
                 .lineTo(new Vector2d(-36.41, 19.06))
+                .build();
+
+        TrajectorySequence BlueFarCenter_p2 = drive.trajectorySequenceBuilder(BlueFarCenter_p1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(-18.61, 12.23), Math.toRadians(7.57))
                 .splineTo(new Vector2d(30.48, 14.76), Math.toRadians(20.35))
                 .splineTo(new Vector2d(50.79, 28.40), Math.toRadians(6.71))
                 .build();
-        TrajectorySequence BlueFarLeft = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
+
+        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(12)
+                .build();
+
+        TrajectorySequence BlueFarLeft_p1 = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
                 .lineTo(new Vector2d(-50.20, 45.90))
                 .setReversed(true)
                 .splineTo(new Vector2d(-18.17, 33.15), Math.toRadians(0.00))
+                .build();
+        TrajectorySequence BlueFarLeft_p2 = drive.trajectorySequenceBuilder(BlueFarLeft_p1.end())
                 .lineTo(new Vector2d(-18.17, 4.67))
                 .setReversed(false)
                 .lineTo(new Vector2d(36.26, 9.27))
                 .setReversed(true)
                 .lineTo(new Vector2d(42.19, 40.86))
                 .build();
-        TrajectorySequence BlueFarRight = drive.trajectorySequenceBuilder(new Pose2d(-37.15, 59.99, Math.toRadians(90.00)))
+        TrajectorySequence BlueFarRight_p1 = drive.trajectorySequenceBuilder(new Pose2d(-37.15, 59.99, Math.toRadians(90.00)))
                 .lineTo(new Vector2d(-48.72, 49.01))
                 .setReversed(true)
-                .lineTo(new Vector2d(-48.72, 27.66))
+                .lineTo(new Vector2d(-44, 10))
+                .build();
+        TrajectorySequence BlueFarRight_p2 = drive.trajectorySequenceBuilder(BlueFarRight_p1.end())
+                .setReversed(true)
                 .splineTo(new Vector2d(39.23, 10.75), Math.toRadians(0.00))
-                .lineTo(new Vector2d(46.79, 35.22))
+                .lineTo(new Vector2d(32, 23))
                 .build();
 
 
         while (opModeInInit()) {
 
-            direction = teamPropDetectionPipeline.getDirection();
+            //direction = teamPropDetectionPipeline.getDirection();
+            direction = "right";
 
 
-            while (!isStopRequested()) {
 
+            while(!isStopRequested() && !opModeIsActive()) {
 
-                if (direction == "center") {
-                    drive.setPoseEstimate(BlueFarCenter.start());
-                    drive.followTrajectorySequence(BlueFarCenter);
-                    break;
-                }
-                else if (direction == "left") {
-                    drive.setPoseEstimate(BlueFarLeft.start());
-                    drive.followTrajectorySequence(BlueFarLeft);
-                    break;
-                }
-                else if (direction == "right") {
-                    drive.setPoseEstimate(BlueFarRight.start());
-                    drive.followTrajectorySequence(BlueFarRight);
-                    break;
-                }
+            }
+            waitForStart();
+            if (isStopRequested()) {
                 camera.closeCameraDevice();
-                //return;
+                return;
+            }
+            pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
+            pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
+
+            if(direction == "left") {
+                drive.setPoseEstimate(BlueFarLeft_p1.start());
+                drive.followTrajectorySequence(BlueFarLeft_p1);
+            } else if(direction == "right"){
+                drive.setPoseEstimate(BlueFarRight_p1.start());
+                drive.followTrajectorySequence(BlueFarRight_p1);
+            }else{
+                drive.setPoseEstimate(BlueFarCenter_p1.start());
+                drive.followTrajectorySequence(BlueFarCenter_p1);
             }
 
-        }
-    }
+            pixelArm.transition(ArmV2.EVENT.DROP_PURPLE);
+            sleep(1000);
+            pixelArm.transition(ArmV2.EVENT.DROP_LEFT_PIXEL);
+            sleep(500);
+            pixelArm.transition(ArmV2.EVENT.AUTON_POS);
 
+            if(direction == "left"){
+                drive.setPoseEstimate(BlueFarLeft_p2.start());
+                drive.followTrajectorySequence(BlueFarLeft_p2);
+            }
+            else if (direction == "right") {
+                drive.setPoseEstimate(BlueFarRight_p2.start());
+                drive.followTrajectorySequence(BlueFarRight_p2);
+            }else{
+                drive.setPoseEstimate(BlueFarCenter_p2.start());
+                drive.followTrajectorySequence(BlueFarCenter_p2);
+            }
+
+            int level1 = 0;
+
+            while (!isStopRequested()) {
+                drive.update();
+                if (level1 == 0){
+                    pixelArm.transition(ArmV2.EVENT.DROP_BACKDROP);
+                    drive.setPoseEstimate(moveForward.start());
+                    drive.followTrajectorySequence(moveForward);
+                    //sleep(2000);
+                    level1++;
+                }
+                if (pixelArm.armReached == false)
+                {
+                    pixelArm.update();
+                }
+                else
+                {
+                    sleep(2000);
+
+                    pixelArm.transition(ArmV2.EVENT.DROP_RIGHT_PIXEL);
+                    sleep(2000);
+
+                    break;
+
+                }
+//            pixelArm.update();
+
+                telemetry.addLine("DROP POS");
+                telemetry.update();
+            }
+        }
+
+    }
 }

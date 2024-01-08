@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,7 +17,13 @@ public class ArmV2 {
     public enum STATE {
         MOVING_L2_UP,
         MOVING_L2_DOWN,
-        LINK2_IDEL
+        LINK2_IDEL,
+        ARM_IN_PICK,
+        ARM_IN_DRIVE,
+        ARM_IN_DROP,
+        ARM_MOVE_PICK,
+        ARM_MOVE_DRIVE,
+        ARM_MOVE_DROP
     };
 
     public enum EVENT {
@@ -35,6 +43,8 @@ public class ArmV2 {
         ARM_MOVE_UP,
         ARM_MOVE_DOWN,
         ARM_STOP,
+        DROP_PURPLE,
+        AUTON_POS,
         PID
     }
     EVENT currentEvent;
@@ -43,18 +53,10 @@ public class ArmV2 {
     public Link2 link2;
     public Claw claw;
     public double currentAngle;
-
     public double targetAngle;
-
-    public double power=0.2;
-    double l2targetAngle = 0;
-    private double kp = 0.009; // Proportional gain
-    private double ki = 0; // Integral gain
-    private double kd = 0; // Derivative gain
-    private double integral = 0;
-    private double previousError = 0;
-
     public boolean PID_Trigger = false;
+    public boolean armReached = false;
+
 
     Telemetry armTelemetry;
     public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -66,12 +68,13 @@ public class ArmV2 {
 
         claw = new Claw(hardwareMap.get(Servo.class, "clawLeft"), hardwareMap.get(Servo.class, "clawRight"));
         armTelemetry = telemetry;
+        targetAngle = link2.getAngle();
     }
 
-    public void transition(EVENT event) {
+    public void transition(EVENT event){
         switch (event) {
             case DRIVE_WITH_PIXEL_POS:
-                link2.updateTargetPos(0);
+                link2.updateTargetPos(10);
                 claw.close();
                 link1.drop();
                 break;
@@ -80,6 +83,7 @@ public class ArmV2 {
                 break;
             case DROP_RIGHT_PIXEL:
                 claw.openRight();
+                break;
             case BACK_DROP_AUTON:
                 link2.updateTargetPos(150);
                 link1.moveLinks(0.7);
@@ -88,17 +92,17 @@ public class ArmV2 {
                 claw.open();
                 break;
             case ARM_ALLIGN:
-                link2.updateTargetPos(15);
-                claw.open();
-                link1.pickUp();
-                break;
-            case STARTER_STACK_PICK_UP:
                 link2.updateTargetPos(30);
                 claw.open();
                 link1.pickUp();
                 break;
+            case STARTER_STACK_PICK_UP:
+                link2.updateTargetPos(60);
+                claw.open();
+                link1.pickUp();
+                break;
             case DRIVE_WITHOUT_PIXEL_POS:
-                link2.updateTargetPos(0);
+                link2.updateTargetPos(10);
                 claw.open();
                 link1.drop();
                 break;
@@ -131,23 +135,28 @@ public class ArmV2 {
                 break;
             case PID:
                 PID_Trigger = !(PID_Trigger);
+                break;
+            case DROP_PURPLE:
+                link2.updateTargetPos(30);
+                link1.pickUp();
+                //claw.openRight();
+                break;
+            case AUTON_POS:
+                link2.updateTargetPos(40);
+                link1.moveLinks(1);
 
         }
     }
 
-
-
     public void update()
     {
-        //link2.update();
-        if (PID_Trigger) {
-            link2.pid(targetAngle);
-        }
+        link2.update();
         armTelemetry.addData("L2 target angle", targetAngle );
         armTelemetry.addData("L2 state", link2.L2State);
         armTelemetry.addData("L2 current angle", link2.getAngle());
         armTelemetry.update();
     }
+
 
     private class Link1 {
         public Servo l1LeftServo;
@@ -167,8 +176,9 @@ public class ArmV2 {
             link1.moveLinks(0);
         }
         public void drop(){
-            link1.moveLinks(1);
+            link1.moveLinks(0.8);
         }
+
     }
 
     private class Link2 {
@@ -176,6 +186,16 @@ public class ArmV2 {
         AnalogInput potmeter;
         public double l2targetAngle;
 
+        public double power=0.2;
+        private double kp = 0.009; // Proportional gain
+        private double ki = 0; // Integral gain
+        private double kd = 0; // Derivative gain
+        double proportional;
+        double derivative;
+        private double integral = 0;
+        private double previousError = 0;
+
+        private final double ARM_ERROR_OFFSET = 5;
 
 
         public STATE L2State = STATE.LINK2_IDEL;
@@ -228,24 +248,24 @@ public class ArmV2 {
             }
         }
 
-//        public void update() {
-//            currentAngle = getAngle();
-//            if (L2State == STATE.MOVING_L2_DOWN) {
-//                if (currentAngle < l2targetAngle) {
-//                    link2ArmMotor.setPower(0);
-////                int pos = link2ArmMotor.getCurrentPosition();
-////                link2ArmMotor.setTargetPosition((int) (pos+1));
-////                link2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                link2ArmMotor.setPower(0.2);
-//                }
-//            }
-//            if (L2State == STATE.MOVING_L2_UP) {
-//                if (currentAngle > l2targetAngle) {
-//                    link2ArmMotor.setPower(0);
-//                }
-//            }
-//
-//        }
+        public void update() {
+            link2.pid(targetAngle);
+            currentAngle = getAngle();
+            if (L2State == STATE.MOVING_L2_DOWN) {
+                if (currentAngle < l2targetAngle) {
+                    link2ArmMotor.setPower(0);
+                    L2State = STATE.LINK2_IDEL;
+                }
+
+            }
+            if (L2State == STATE.MOVING_L2_UP) {
+                if (currentAngle > l2targetAngle) {
+                    link2ArmMotor.setPower(0);
+                    L2State = STATE.LINK2_IDEL;
+                }
+            }
+
+        }
 
         public void pid(double target){
 
@@ -257,16 +277,15 @@ public class ArmV2 {
             double angle = getAngle();
             double error = target - angle;
 
-
             // Proportional term
-            double proportional = kp * error;
+            proportional = kp * error;
 
             // Integral term (with anti-windup)
             integral += ki * error;
             integral = Range.clip(integral, -1 / ki, 1 / ki);
 
             // Derivative term
-            double derivative = kd * (error - previousError);
+            derivative = kd * (error - previousError);
 
             // PID output
             double output = proportional + integral + derivative;
@@ -277,12 +296,15 @@ public class ArmV2 {
             // Update previous error
             previousError = error;
 
-            // Check if the motor has reached the target position
-//            if (Math.abs(error) < 1) {
-//                link2ArmMotor.setPower(0); // Stop the motor
-//            }
+            if (Math.abs(error) < ARM_ERROR_OFFSET) {
+                armReached = true;
+            }else{
+                armReached = false;
+            }
 
         }
+
+
         public void updateTargetPos(double target){
             targetAngle = target;
         }
@@ -322,7 +344,7 @@ public class ArmV2 {
         }
 
         public void closeLeft(){
-            clawServoL.setPosition(0.5);
+            clawServoL.setPosition(0.45);
         }
         public void closeRight(){
             clawServoR.setPosition(0.5);

@@ -60,10 +60,6 @@ public class CenterstageTeleopWithSM_V1 extends LinearOpMode {
                 pixelArm.transition(ArmV2.EVENT.PIXEL_PICK_UP);
                 debugLog("Arm Pick Pos in teleop");
             }
-            if(gamepad2.y & gamepad2.right_bumper){
-                pixelArm.transition(ArmV2.EVENT.DROP_BOTH_PIXELS);
-                debugLog("Claw Open and drop 2 pixels");
-            }
             if(gamepad2.left_bumper){
                 pixelArm.transition(ArmV2.EVENT.DROP_LEFT_PIXEL);
                 debugLog("Claw Open");
@@ -88,6 +84,9 @@ public class CenterstageTeleopWithSM_V1 extends LinearOpMode {
             }
             if (gamepad2.x){
                 pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
+            }
+            if (gamepad2.dpad_right){
+                pixelArm.transition((ArmV2.EVENT.DROP_PURPLE));
             }
 
             pixelArm.update();
