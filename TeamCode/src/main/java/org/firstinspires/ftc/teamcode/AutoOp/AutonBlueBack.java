@@ -116,10 +116,12 @@ public class AutonBlueBack extends LinearOpMode {
             while(!isStopRequested() && !opModeIsActive()) {
 
             }
+            waitForStart();
+
             if (isStopRequested()) {
                 camera.closeCameraDevice();
+                return;
             }
-            waitForStart();
 
 
             pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
