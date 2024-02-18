@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * detect a number of predefined objects and AprilTags in the 36h11 family, can
  * recognize colors, and can be trained to detect custom objects. See this website for
  * documentation: https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336
- * 
+ *
  * This sample illustrates how to detect AprilTags, but can be used to detect other types
  * of objects by changing the algorithm. It assumes that the HuskyLens is configured with
  * a name of "huskylens".
@@ -59,16 +59,21 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Sensor: HuskyLens", group = "Sensor")
-public class SensorHuskyLens extends LinearOpMode {
+@TeleOp(name = "HuskyLensAtagPixel", group = "Sensor")
+public class HuskyLensAprilTag extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
 
     private HuskyLens huskyLens;
 
+    public double id1Center;
+    public double id2Center;
+    public double id3Center;
+    public double pixelCenter;
+    public String placement;
+
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         /*
@@ -110,8 +115,9 @@ public class SensorHuskyLens extends LinearOpMode {
          * within the OpMode by calling selectAlgorithm() and passing it one of the values
          * found in the enumeration HuskyLens.Algorithm.
          */
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        //huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
 
         telemetry.update();
         waitForStart();
@@ -122,7 +128,7 @@ public class SensorHuskyLens extends LinearOpMode {
          *
          * Note again that the device only recognizes the 36h11 family of tags out of the box.
          */
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             if (!rateLimit.hasExpired()) {
                 continue;
             }
@@ -137,13 +143,71 @@ public class SensorHuskyLens extends LinearOpMode {
              *
              * Returns an empty array if no objects are seen.
              */
-            HuskyLens.Block[] blocks = huskyLens.blocks();
-            telemetry.addData("Block count", blocks.length);
-            for (int i = 0; i < blocks.length; i++) {
-                telemetry.addData("Block", blocks[i].toString());
-            }
 
-            telemetry.update();
+            huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+
+            for (int x = 0; x <= 49; x++) {
+                HuskyLens.Block[] tagBlocks = huskyLens.blocks();
+                telemetry.addData("Block count", tagBlocks.length);
+                for (int i = 0; i < tagBlocks.length; i++) {
+
+                    telemetry.addData("Tag", tagBlocks[i].toString());
+                    telemetry.addData("X center: ", tagBlocks[i].x);
+                    telemetry.addData("Y center: ", tagBlocks[i].y);
+                    //telemetry.update();
+
+                    if (tagBlocks[i].id == 1) {
+                        id1Center += tagBlocks[i].x;
+                    }
+                    if (tagBlocks[i].id == 2) {
+                        id2Center += tagBlocks[i].x;
+                    }
+                    if (tagBlocks[i].id == 3) {
+                        id3Center += tagBlocks[i].x;
+                    }
+
+                    //telemetry.update();
+                }
+            }
+            id1Center /= 50;
+            id2Center /= 50;
+            id3Center /= 50;
+
+            double range2 = id1Center + ((Math.abs(id1Center - id2Center)) / 2);
+            double range1 = id1Center - ((Math.abs(id1Center - id2Center)) / 2);
+            double range3 = id2Center + ((Math.abs(id2Center - id3Center)) / 2);
+            double range4 = id3Center + ((Math.abs(id2Center - id3Center)) / 2);
+
+            for (int y = 0; y < 50; y++) {
+
+                huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+
+                HuskyLens.Block[] pixelBlocks = huskyLens.blocks();
+                for (int i = 0; i < pixelBlocks.length; i++) {
+
+                    telemetry.addData("Pixel", pixelBlocks[i].toString());
+                    telemetry.addData("Pixel X center: ", pixelBlocks[i].x);
+                    telemetry.addData("Pixel Y center: ", pixelBlocks[i].y);
+                    pixelCenter = pixelBlocks[i].x;
+                    //telemetry.update();
+
+
+                    if (pixelCenter > range1 && pixelCenter < range2) {
+                        placement = "LEFT";
+                    } else if (pixelCenter > range2 && pixelCenter < range3) {
+                        placement = "CENTER";
+                    } else if (pixelCenter > range3 && pixelCenter < range4) {
+                        placement = "RIGHT";
+                    } else {
+                        placement = "NA";
+                    }
+
+                    telemetry.addData("Place:", placement);
+                    telemetry.update();
+                    //break;
+                }
+            }
+            break;
         }
     }
 }

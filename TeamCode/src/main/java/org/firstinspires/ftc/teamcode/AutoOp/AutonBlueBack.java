@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.modules.ArmV2;
 import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
@@ -70,13 +71,17 @@ public class AutonBlueBack extends LinearOpMode {
          */
 
         TrajectorySequence BlueCloseCenter_p1 = drive.trajectorySequenceBuilder(new Pose2d(12.53, 59.69, Math.toRadians(90.00)))
-                .lineTo(new Vector2d(10.46, 9.57))
+                .lineTo(new Vector2d(10.46, 8))
                 .build();
 
         TrajectorySequence BlueCloseCenter_p2 = drive.trajectorySequenceBuilder(BlueCloseCenter_p1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(36.11, 8.38), Math.toRadians(0.00))
-                .lineTo(new Vector2d(30, 30.33))
+                .lineTo(new Vector2d(26, 26))
+                .build();
+
+        TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(39.77, 34.69, Math.toRadians(183.81)))
+                .lineTo(new Vector2d(51.33, 60.26))
                 .build();
 
         TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d())
@@ -90,36 +95,36 @@ public class AutonBlueBack extends LinearOpMode {
                 .build();
         TrajectorySequence BlueCloseLeft_p2 = drive.trajectorySequenceBuilder(BlueCloseLeft_p1.end())
                 .setReversed(true)
-                .lineTo(new Vector2d(30, 32))
+                .lineTo(new Vector2d(26, 33))
                 .build();
         TrajectorySequence BlueCloseRight_p1 = drive.trajectorySequenceBuilder(new Pose2d(11.49, 59.25, Math.toRadians(90.00)))
-                .lineTo(new Vector2d(11.93, 50.76))
+                .lineTo(new Vector2d(12.47, 41.62))
                 .setReversed(true)
-                .splineTo(new Vector2d(15.93, 34.74), Math.toRadians(-3.01))
-                .splineTo(new Vector2d(3.22, 34.91), Math.toRadians(180.00))
-                //.setReversed(false)
+                .splineTo(new Vector2d(21.25, 28.98), Math.toRadians(2.20))
+                .lineTo(new Vector2d(7, 28.80))
+                .setReversed(false)
                 .build();
+
         TrajectorySequence BlueCloseRight_p2 = drive.trajectorySequenceBuilder(BlueCloseRight_p1.end())
+                .lineTo(new Vector2d(26, 20))
                 .setReversed(true)
-                .lineTo(new Vector2d(30, 26))
-                //.setReversed(true)
                 .build();
 
 
 
         while (opModeInInit()) {
 
-            //direction = teamPropDetectionPipeline.getDirection();
+            direction = teamPropDetectionPipeline.getDirection();
+            telemetry.addData("DIRECTION: ", direction);
+            telemetry.update();
+            //direction = "left";
 
-            direction = "r";
-
-            while(!isStopRequested() && !opModeIsActive()) {
-
-            }
+        }
+        camera.closeCameraDevice();
             waitForStart();
-
             if (isStopRequested()) {
-                camera.closeCameraDevice();
+                telemetry.addLine("in stop");
+                telemetry.update();
                 return;
             }
 
@@ -127,10 +132,14 @@ public class AutonBlueBack extends LinearOpMode {
             pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
             pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
 
+            telemetry.addLine("DONE INIT,STARTING");
+
+
             if(direction == "left") {
                 drive.setPoseEstimate(BlueCloseLeft_p1.start());
                 drive.followTrajectorySequence(BlueCloseLeft_p1);
-            } else if(direction == "r"){
+            } else if(direction == "right"){
+                telemetry.addLine("Starting 1st part");
                 drive.setPoseEstimate(BlueCloseRight_p1.start());
                 drive.followTrajectorySequence(BlueCloseRight_p1);
             }else{
@@ -148,7 +157,9 @@ public class AutonBlueBack extends LinearOpMode {
                 drive.setPoseEstimate(BlueCloseLeft_p2.start());
                 drive.followTrajectorySequence(BlueCloseLeft_p2);
             }
-            else if (direction == "r") {
+            else if (direction == "right") {
+                telemetry.addLine("Starting 2nd Part");
+
                 drive.setPoseEstimate(BlueCloseRight_p2.start());
                 drive.followTrajectorySequence(BlueCloseRight_p2);
             }else{
@@ -177,7 +188,13 @@ public class AutonBlueBack extends LinearOpMode {
 
                     pixelArm.transition(ArmV2.EVENT.DROP_RIGHT_PIXEL);
                     sleep(2000);
-
+                    pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
+                    pixelArm.update();
+                    sleep(1000);
+                    pixelArm.update();
+                    drive.setPoseEstimate(park.start());
+                    drive.followTrajectorySequence(park);
+                    pixelArm.update();
                     break;
 
                 }
@@ -185,7 +202,7 @@ public class AutonBlueBack extends LinearOpMode {
 
                 telemetry.addLine("DROP POS");
                 telemetry.update();
-            }
+
         }
 
     }

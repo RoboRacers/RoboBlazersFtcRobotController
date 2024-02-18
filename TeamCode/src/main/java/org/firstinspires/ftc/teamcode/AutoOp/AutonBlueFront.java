@@ -75,27 +75,50 @@ public class AutonBlueFront extends LinearOpMode {
                 .build();
 
         TrajectorySequence BlueFarCenter_p2 = drive.trajectorySequenceBuilder(BlueFarCenter_p1.end())
+//                .setReversed(true)
+//                .splineTo(new Vector2d(-18.61, 12.23), Math.toRadians(7.57))
+//                .splineTo(new Vector2d(30.48, 14.76), Math.toRadians(20.35))
+//                .splineTo(new Vector2d(32, 29), Math.toRadians(6.71))
+//                .build();
+                .lineTo(new Vector2d(-36.53, 14.58))
                 .setReversed(true)
-                .splineTo(new Vector2d(-18.61, 12.23), Math.toRadians(7.57))
-                .splineTo(new Vector2d(30.48, 14.76), Math.toRadians(20.35))
-                .splineTo(new Vector2d(50.79, 28.40), Math.toRadians(6.71))
+                .splineTo(new Vector2d(-0.70, 10.36), Math.toRadians(-1.12))
+                .setReversed(false)
+                .lineTo(new Vector2d(38.11, 11.77))
+                .setReversed(true)
+                .lineTo(new Vector2d(32, 33))
                 .build();
 
         TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d())
                 .back(12)
                 .build();
 
-        TrajectorySequence BlueFarLeft_p1 = drive.trajectorySequenceBuilder(new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
-                .lineTo(new Vector2d(-50.20, 45.90))
+        TrajectorySequence BlueFarLeft_p1 = drive.trajectorySequenceBuilder(
+                new Pose2d(-38.48, 61.92, Math.toRadians(90.00)))
+//                .lineTo(new Vector2d(-37.05, 49.52))
+//                .setReversed(true)
+//                .splineTo(new Vector2d(-43.90, 37.23), Math.toRadians(180.00))
+//                .lineTo(new Vector2d(-32, 30))
+//                .setReversed(false)
+//                .lineTo(new Vector2d(-20, 32))
+//                .lineTo(new Vector2d(-33, 32))
+//
+//                .build();
+                .lineTo(new Vector2d(-37.40, 44.96))
                 .setReversed(true)
-                .splineTo(new Vector2d(-18.17, 33.15), Math.toRadians(0.00))
-                .build();
-        TrajectorySequence BlueFarLeft_p2 = drive.trajectorySequenceBuilder(BlueFarLeft_p1.end())
-                .lineTo(new Vector2d(-18.17, 4.67))
+                .splineTo(new Vector2d(-42.67, 36.18), Math.toRadians(180.00))
+                .lineTo(new Vector2d(-17.21, 30))
                 .setReversed(false)
-                .lineTo(new Vector2d(36.26, 9.27))
+                .lineTo(new Vector2d(-33.72, 30))
+                .build();
+
+        TrajectorySequence BlueFarLeft_p2 = drive.trajectorySequenceBuilder(BlueFarLeft_p1.end())
+                .lineTo(new Vector2d(-37.76, 0))
                 .setReversed(true)
-                .lineTo(new Vector2d(42.19, 40.86))
+                .splineTo(new Vector2d(-38.28, 0), Math.toRadians(0.00))
+                .setReversed(false)
+                .lineTo(new Vector2d(30.56, 0))
+                .lineTo(new Vector2d(32, 31))
                 .build();
         TrajectorySequence BlueFarRight_p1 = drive.trajectorySequenceBuilder(new Pose2d(-37.15, 59.99, Math.toRadians(90.00)))
                 .lineTo(new Vector2d(-48.72, 49.01))
@@ -105,29 +128,33 @@ public class AutonBlueFront extends LinearOpMode {
         TrajectorySequence BlueFarRight_p2 = drive.trajectorySequenceBuilder(BlueFarRight_p1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(39.23, 10.75), Math.toRadians(0.00))
-                .lineTo(new Vector2d(32, 23))
+                .lineTo(new Vector2d(32, 18))
                 .build();
 
 
         while (opModeInInit()) {
 
-            //direction = teamPropDetectionPipeline.getDirection();
-            direction = "right";
+            direction = teamPropDetectionPipeline.getDirection();
+            telemetry.addData("DIRECTION: ", direction);
+            telemetry.update();
+            //direction = "left";
+
+        }
+        camera.closeCameraDevice();
 
 
-
-            while(!isStopRequested() && !opModeIsActive()) {
-
-            }
             waitForStart();
             if (isStopRequested()) {
-                camera.closeCameraDevice();
+                //camera.closeCameraDevice();
                 return;
             }
             pixelArm.transition(ArmV2.EVENT.DRIVE_WITH_PIXEL_POS);
             pixelArm.transition(ArmV2.EVENT.CLAW_CLOSE);
 
-            if(direction == "left") {
+            sleep(8000);
+
+
+        if(direction == "left") {
                 drive.setPoseEstimate(BlueFarLeft_p1.start());
                 drive.followTrajectorySequence(BlueFarLeft_p1);
             } else if(direction == "right"){
@@ -181,12 +208,12 @@ public class AutonBlueFront extends LinearOpMode {
                     break;
 
                 }
-//            pixelArm.update();
+            pixelArm.update();
 
                 telemetry.addLine("DROP POS");
-                telemetry.update();
+                //telemetry.update();
             }
-        }
+
 
     }
 }

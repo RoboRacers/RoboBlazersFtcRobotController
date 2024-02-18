@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modules;
 
 import static java.lang.Thread.sleep;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,8 +12,10 @@ import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+@Config
 public class ArmV2 {
+
+    public static ArmV2 Link1;
 
     public enum STATE {
         MOVING_L2_UP,
@@ -58,6 +61,13 @@ public class ArmV2 {
     public boolean armReached = false;
 
 
+
+    public static double kp = 0.007; // Proportional gain
+    public static double ki = 0.0000; // Integral gain
+    public static double kd = 0.0000; // Derivative gain
+
+    public static double kf = 0.1;
+
     Telemetry armTelemetry;
     public ArmV2(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the base class
@@ -74,9 +84,9 @@ public class ArmV2 {
     public void transition(EVENT event){
         switch (event) {
             case DRIVE_WITH_PIXEL_POS:
-                link2.updateTargetPos(10);
                 claw.close();
-                link1.drop();
+                link2.updateTargetPos(-5);
+                link1.moveLinks(1);
                 break;
             case DROP_LEFT_PIXEL:
                 claw.openLeft();
@@ -97,32 +107,32 @@ public class ArmV2 {
                 link1.pickUp();
                 break;
             case STARTER_STACK_PICK_UP:
-                link2.updateTargetPos(60);
+                link2.updateTargetPos(7);
                 claw.open();
                 link1.pickUp();
                 break;
             case DRIVE_WITHOUT_PIXEL_POS:
-                link2.updateTargetPos(10);
-                claw.open();
-                link1.drop();
+                claw.close();
+                // link2.updateTargetPos(5);
+                link1.moveLinks(1);
                 break;
             case PIXEL_PICK_UP:
-                link2.updateTargetPos(15);
+                link2.updateTargetPos(-3);
+                //claw.open();
                 link1.pickUp();
-                claw.open();
                 break;
             case CLAW_CLOSE:
                 claw.close();
                 break;
             case DROP_BACKDROP:
-                link2.updateTargetPos(120);
+                link2.updateTargetPos(130);
                 link1.drop();
                 break;
             case ARM_INCREMENT_UP:
-                link2.updateTargetPos(link2.getAngle() + 5);
+                link2.updateTargetPos(targetAngle + 1);
                 break;
             case ARM_INCREMENT_DOWN:
-                link2.updateTargetPos(link2.getAngle() - 5);
+                link2.updateTargetPos(targetAngle - 1);
                 break;
             case ARM_MOVE_UP:
                 link2.moveUp();
@@ -131,10 +141,11 @@ public class ArmV2 {
                 link2.moveDown();
                 break;
             case ARM_STOP:
-                link2.stopArm();
+                link1.moveLinks(1);
                 break;
             case PID:
-                PID_Trigger = !(PID_Trigger);
+                link2.updateTargetPos(5);
+                link1.moveLinks(1);
                 break;
             case DROP_PURPLE:
                 link2.updateTargetPos(30);
@@ -142,8 +153,8 @@ public class ArmV2 {
                 //claw.openRight();
                 break;
             case AUTON_POS:
-                link2.updateTargetPos(40);
-                link1.moveLinks(1);
+                //link2.updateTargetPos(40);
+                link1.pickUp();
 
         }
     }
@@ -158,7 +169,7 @@ public class ArmV2 {
     }
 
 
-    private class Link1 {
+    public class Link1 {
         public Servo l1LeftServo;
         public Servo l1RightServo;
 
@@ -168,28 +179,25 @@ public class ArmV2 {
         }
 
         public void moveLinks(double pos){
-            l1LeftServo.setPosition(pos);
+            l1LeftServo.setPosition(pos-0.01);
             l1RightServo.setPosition(pos);
         }
 
         public void pickUp(){
-            link1.moveLinks(0);
+            link1.moveLinks(0.07);
         }
         public void drop(){
-            link1.moveLinks(0.8);
+            link1.moveLinks(0.85);
         }
 
     }
-
-    private class Link2 {
+    @Config
+    public class Link2 {
         DcMotorEx link2ArmMotor;
         AnalogInput potmeter;
         public double l2targetAngle;
 
         public double power=0.2;
-        private double kp = 0.009; // Proportional gain
-        private double ki = 0; // Integral gain
-        private double kd = 0; // Derivative gain
         double proportional;
         double derivative;
         private double integral = 0;
@@ -230,11 +238,11 @@ public class ArmV2 {
             link2ArmMotor.setPower(0);
         }
         public void incrementUp(){
-            link2ArmMotor.setPower(0.1);
+            link2ArmMotor.setTargetPosition((int) (link2.getAngle() + 40));
         }
 
         public void incrementDown(){
-            link2ArmMotor.setPower(-0.1);
+            link2ArmMotor.setTargetPosition((int) (link2.getAngle() - 40));
 
         }
 
@@ -249,6 +257,7 @@ public class ArmV2 {
         }
 
         public void update() {
+            link2.link2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             link2.pid(targetAngle);
             currentAngle = getAngle();
             if (L2State == STATE.MOVING_L2_DOWN) {
@@ -288,16 +297,18 @@ public class ArmV2 {
             derivative = kd * (error - previousError);
 
             // PID output
-            double output = proportional + integral + derivative;
+            double output = proportional + integral + derivative; //+(Math.cos(link2.getAngle() - 21) * kf) ;
+
 
             // Apply the output to the motor
-            link2ArmMotor.setPower(-output);
+            link2ArmMotor.setPower(-output );
 
             // Update previous error
             previousError = error;
 
-            if (Math.abs(error) < ARM_ERROR_OFFSET) {
+            if (Math.abs(error) < 5) {
                 armReached = true;
+
             }else{
                 armReached = false;
             }
@@ -310,7 +321,7 @@ public class ArmV2 {
         }
     }
 
-    private class Claw {
+    public class Claw {
         Servo clawServoL;
         Servo clawServoR;
         public Claw(Servo clawLeft, Servo clawRight) {
@@ -337,17 +348,17 @@ public class ArmV2 {
         }
 
         public void openLeft(){
-            clawServoL.setPosition(0);
+            clawServoL.setPosition(0.01);
         }
         public void openRight(){
             clawServoR.setPosition(0);
         }
 
         public void closeLeft(){
-            clawServoL.setPosition(0.45);
+            clawServoL.setPosition(0.47);
         }
         public void closeRight(){
-            clawServoR.setPosition(0.5);
+            clawServoR.setPosition(0.4);
         }
     }
 }

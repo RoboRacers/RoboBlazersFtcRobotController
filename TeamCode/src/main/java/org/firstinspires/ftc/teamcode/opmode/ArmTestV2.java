@@ -29,7 +29,7 @@ public class ArmTestV2 extends LinearOpMode {
                 debugLog("Arm Drop Pos in teleop");
             }
             if(gamepad2.dpad_down){
-                pixelArm.transition(ArmV2.EVENT.PIXEL_PICK_UP);
+                pixelArm.transition(ArmV2.EVENT.PIXEL_PICK_UP);               //HEREHREHHRHEHRE
                 debugLog("Arm Pick Pos in teleop");
             }
             if(gamepad2.y & gamepad2.right_bumper){
@@ -52,8 +52,8 @@ public class ArmTestV2 extends LinearOpMode {
                 pixelArm.transition(ArmV2.EVENT.ARM_INCREMENT_UP);
                 debugLog("Increment Up");
             }
-            if (gamepad2.y){
-                pixelArm.transition((ArmV2.EVENT.PID));
+            if (gamepad2.x){
+                pixelArm.transition((ArmV2.EVENT.DRIVE_WITH_PIXEL_POS));         //HEHERHHERHHEHRHER
             }
 
             pixelArm.update();
