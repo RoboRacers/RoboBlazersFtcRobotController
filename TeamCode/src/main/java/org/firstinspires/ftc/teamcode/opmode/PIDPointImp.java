@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.modules.drive.SampleMecanumDrive;
 
 
 @Config
-@Disabled
 @TeleOp(name = "PID to Point", group = "16481-Centerstage")
 public class PIDPointImp extends LinearOpMode {
 
@@ -62,10 +61,11 @@ public class PIDPointImp extends LinearOpMode {
             );
 
             // Update all state machines
-            drive.updatePoseEstimate();
+            drive.update();
 
             // Telemetry
             telemetry.addLine("\uD83C\uDFCE PID to Point Implementation");
+
             telemetry.update();
         }
     }
