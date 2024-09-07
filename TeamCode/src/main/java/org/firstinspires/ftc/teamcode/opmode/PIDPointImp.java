@@ -15,15 +15,15 @@ public class PIDPointImp extends LinearOpMode {
 
     private SampleMecanumDrive drive;
 
-    public static double xkP = 0.1;
+    public static double xkP = 0.07;
     public static double xkI = 0.01;
-    public static double xkD = 0.01;
+    public static double xkD = 0.00000000001;
     public static double ykP = 0.1;
     public static double ykI = 0.01;
-    public static double ykD = 0.01;
-    public static double hkP = 0.1;
+    public static double ykD = 0.00000000001;
+    public static double hkP = 0.09;
     public static double hkI = 0.01;
-    public static double hkD = 0.01;
+    public static double hkD = 0.00000000001;
 
     public static double xTarget = 0;
     public static double yTarget = 0;
